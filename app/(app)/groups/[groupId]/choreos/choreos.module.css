@@ -1,0 +1,139 @@
+.page {
+  padding-top: 32px;
+  padding-bottom: 60px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 32px;
+  gap: 12px;
+}
+
+.emptyIcon { font-size: 48px; margin-bottom: 8px; }
+.empty h3 { font-size: 20px; font-weight: 700; }
+.empty p { color: var(--text-secondary); font-size: 15px; }
+
+/* Grid */
+.choreoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.choreoCard {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.choreoCard::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color, var(--accent-1));
+  transition: var(--transition);
+}
+
+.choreoCard:hover {
+  transform: translateX(4px);
+  border-color: color-mix(in srgb, var(--color, var(--accent-1)) 40%, transparent);
+}
+
+.choreoCard:hover .cardArrow {
+  color: var(--color, var(--accent-1));
+  transform: translateX(4px);
+}
+
+.cardNum {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color, var(--accent-1)) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color, var(--accent-1)) 25%, transparent);
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color, var(--accent-1));
+}
+
+.cardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.choreoName {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.songCount {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.songList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.songTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.cardArrow {
+  color: var(--text-muted);
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .choreoCard { flex-wrap: wrap; }
+  .cardArrow { display: none; }
+}

@@ -1,0 +1,57 @@
+
+
+.logoImg {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
+}
+
+.brandText {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  font-family: var(--font-display);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--teacher-color, #8b5cf6), rgba(236, 72, 153, 0.8));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: white;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--teacher-color, #8b5cf6) 40%, transparent);
+}
+
+.teacherName {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.logoutBtn {
+  color: var(--text-muted) !important;
+}
+
+.logoutBtn:hover {
+  color: var(--danger) !important;
+}
+
+@media (max-width: 480px) {
+  .teacherName { display: none; }
+  .logoutText { display: none; }
+  .brandText { font-size: 15px; }
+}
+
+@media (max-width: 380px) {
+  .brandText { display: none; }
+}
