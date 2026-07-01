@@ -106,28 +106,46 @@ function generateMockNotes() {
   ];
 }
 
+function generateMockChoreoNames() {
+  return [];
+}
+
+function generateMockLoopSections() {
+  return [];
+}
+
+// In-memory cache for mock-db.json (avoids re-reading + parsing 240KB on every request)
+let cachedDb: any = null;
+
 function readMockDb() {
+  if (cachedDb) return cachedDb;
+
   if (!fs.existsSync(MOCK_DB_PATH)) {
     const initialDb = {
       students: generateMockStudents(),
       attendance: generateMockAttendance(),
-      notes: generateMockNotes()
+      notes: generateMockNotes(),
+      choreoNames: generateMockChoreoNames(),
+      loopSections: generateMockLoopSections()
     };
     fs.writeFileSync(MOCK_DB_PATH, JSON.stringify(initialDb, null, 2), 'utf8');
+    cachedDb = initialDb;
     return initialDb;
   }
   try {
     const raw = fs.readFileSync(MOCK_DB_PATH, 'utf8');
-    return JSON.parse(raw);
+    cachedDb = JSON.parse(raw);
+    return cachedDb;
   } catch (err) {
     console.error('Error reading mock db file:', err);
-    return { students: [], attendance: [], notes: [] };
+    return { students: [], attendance: [], notes: [], choreoNames: [], loopSections: [] };
   }
 }
 
 function writeMockDb(data: any) {
   try {
     fs.writeFileSync(MOCK_DB_PATH, JSON.stringify(data, null, 2), 'utf8');
+    cachedDb = data;
   } catch (err) {
     console.error('Error writing mock db file:', err);
   }
@@ -189,13 +207,14 @@ async function writeRow(range: string, values: string[][]): Promise<void> {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STUDENTS — Sheet: "students"
-// Columns: id | groupId | name | active
+// Columns: id | groupId | name | active | createdAt
 // ─────────────────────────────────────────────────────────────────────────────
 export interface Student {
   id: string;
   groupId: string;
   name: string;
   active: boolean;
+  createdAt?: string;
 }
 
 export async function getStudentsByGroup(groupId: string): Promise<Student[]> {
@@ -204,7 +223,7 @@ export async function getStudentsByGroup(groupId: string): Promise<Student[]> {
     return db.students.filter((s: any) => s.groupId === groupId && s.active);
   }
 
-  const rows = await readSheet('students!A:D');
+  const rows = await readSheet('students!A:E');
   if (!rows.length) return [];
   return rows
     .slice(1)
@@ -214,7 +233,67 @@ export async function getStudentsByGroup(groupId: string): Promise<Student[]> {
       groupId: r[1],
       name: r[2],
       active: r[3] !== 'false',
+      createdAt: r[4] || undefined,
     }));
+}
+
+// Incluye también alumnos inactivos (dados de baja) — para la pantalla de gestión.
+export async function getAllStudentsByGroup(groupId: string): Promise<Student[]> {
+  if (isMockMode) {
+    const db = readMockDb();
+    return db.students.filter((s: any) => s.groupId === groupId);
+  }
+
+  const rows = await readSheet('students!A:E');
+  if (!rows.length) return [];
+  return rows
+    .slice(1)
+    .filter((r) => r[1] === groupId)
+    .map((r) => ({
+      id: r[0],
+      groupId: r[1],
+      name: r[2],
+      active: r[3] !== 'false',
+      createdAt: r[4] || undefined,
+    }));
+}
+
+export async function addStudent(groupId: string, name: string): Promise<Student> {
+  const id = `${groupId}-${Date.now()}`;
+  const createdAt = new Date().toISOString().slice(0, 10);
+
+  if (isMockMode) {
+    const db = readMockDb();
+    const newStudent = { id, groupId, name, active: true, createdAt };
+    db.students.push(newStudent);
+    writeMockDb(db);
+    return newStudent;
+  }
+
+  const rows = await readSheet('students!A:E');
+  const allRows: string[][] = rows.length ? rows : [['id', 'groupId', 'name', 'active', 'createdAt']];
+  allRows.push([id, groupId, name, 'true', createdAt]);
+  await writeRow(`students!A1:E${allRows.length}`, allRows);
+
+  return { id, groupId, name, active: true, createdAt };
+}
+
+export async function setStudentActive(studentId: string, active: boolean): Promise<void> {
+  if (isMockMode) {
+    const db = readMockDb();
+    const found = db.students.find((s: any) => s.id === studentId);
+    if (found) found.active = active;
+    writeMockDb(db);
+    return;
+  }
+
+  const rows = await readSheet('students!A:E');
+  if (!rows.length) return;
+  const rowIndex = rows.findIndex((r, i) => i > 0 && r[0] === studentId);
+  if (rowIndex === -1) return;
+
+  rows[rowIndex][3] = active ? 'true' : 'false';
+  await writeRow(`students!A1:E${rows.length}`, rows);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -376,6 +455,156 @@ export async function saveNotes(choreoId: string, content: string): Promise<void
   }
 
   await writeRow(`notes!A1:C${allRows.length}`, allRows);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CHOREO NAMES — Sheet: "choreoNames"
+// Columns: choreoId | name | updatedAt
+// Nombres editables por los profes; si no hay registro, se usa el default
+// hardcodeado en lib/data.ts.
+// ─────────────────────────────────────────────────────────────────────────────
+export interface ChoreoNameOverride {
+  choreoId: string;
+  name: string;
+  updatedAt: string;
+}
+
+export async function getChoreoNameOverride(choreoId: string): Promise<string | null> {
+  if (isMockMode) {
+    const db = readMockDb();
+    const found = (db.choreoNames || []).find((n: any) => n.choreoId === choreoId);
+    return found ? found.name : null;
+  }
+
+  const rows = await readSheet('choreoNames!A:C');
+  if (!rows.length) return null;
+  const found = rows.slice(1).find((r) => r[0] === choreoId);
+  return found ? found[1] || null : null;
+}
+
+export async function getAllChoreoNameOverrides(): Promise<Record<string, string>> {
+  if (isMockMode) {
+    const db = readMockDb();
+    const map: Record<string, string> = {};
+    for (const n of db.choreoNames || []) map[n.choreoId] = n.name;
+    return map;
+  }
+
+  const rows = await readSheet('choreoNames!A:C');
+  const map: Record<string, string> = {};
+  if (!rows.length) return map;
+  for (const r of rows.slice(1)) {
+    if (r[0]) map[r[0]] = r[1] || '';
+  }
+  return map;
+}
+
+export async function saveChoreoName(choreoId: string, name: string): Promise<void> {
+  const updatedAt = new Date().toISOString();
+
+  if (isMockMode) {
+    const db = readMockDb();
+    if (!db.choreoNames) db.choreoNames = [];
+    const foundIndex = db.choreoNames.findIndex((n: any) => n.choreoId === choreoId);
+    if (foundIndex === -1) {
+      db.choreoNames.push({ choreoId, name, updatedAt });
+    } else {
+      db.choreoNames[foundIndex] = { choreoId, name, updatedAt };
+    }
+    writeMockDb(db);
+    return;
+  }
+
+  const rows = await readSheet('choreoNames!A:C');
+  const allRows: string[][] = rows.length ? rows : [['choreoId', 'name', 'updatedAt']];
+
+  const rowIndex = allRows.findIndex((r, i) => i > 0 && r[0] === choreoId);
+
+  if (rowIndex === -1) {
+    allRows.push([choreoId, name, updatedAt]);
+  } else {
+    allRows[rowIndex] = [choreoId, name, updatedAt];
+  }
+
+  await writeRow(`choreoNames!A1:C${allRows.length}`, allRows);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LOOP SECTIONS — Sheet: "loopSections"
+// Columns: id | choreoId | songFile | label | startSec | endSec
+// Secciones marcadas por el profe para practicar un fragmento puntual
+// de una canción (ej: "Estribillo" del segundo 30 al 50).
+// ─────────────────────────────────────────────────────────────────────────────
+export interface LoopSection {
+  id: string;
+  choreoId: string;
+  songFile: string;
+  label: string;
+  startSec: number;
+  endSec: number;
+}
+
+export async function getLoopSections(choreoId: string): Promise<LoopSection[]> {
+  if (isMockMode) {
+    const db = readMockDb();
+    return (db.loopSections || []).filter((s: any) => s.choreoId === choreoId);
+  }
+
+  const rows = await readSheet('loopSections!A:F');
+  if (!rows.length) return [];
+  return rows
+    .slice(1)
+    .filter((r) => r[1] === choreoId)
+    .map((r) => ({
+      id: r[0],
+      choreoId: r[1],
+      songFile: r[2],
+      label: r[3],
+      startSec: parseFloat(r[4]) || 0,
+      endSec: parseFloat(r[5]) || 0,
+    }));
+}
+
+export async function addLoopSection(
+  choreoId: string,
+  songFile: string,
+  label: string,
+  startSec: number,
+  endSec: number
+): Promise<LoopSection> {
+  const id = `${choreoId}-section-${Date.now()}`;
+  const section: LoopSection = { id, choreoId, songFile, label, startSec, endSec };
+
+  if (isMockMode) {
+    const db = readMockDb();
+    if (!db.loopSections) db.loopSections = [];
+    db.loopSections.push(section);
+    writeMockDb(db);
+    return section;
+  }
+
+  const rows = await readSheet('loopSections!A:F');
+  const allRows: string[][] = rows.length
+    ? rows
+    : [['id', 'choreoId', 'songFile', 'label', 'startSec', 'endSec']];
+  allRows.push([id, choreoId, songFile, label, String(startSec), String(endSec)]);
+  await writeRow(`loopSections!A1:F${allRows.length}`, allRows);
+
+  return section;
+}
+
+export async function deleteLoopSection(sectionId: string): Promise<void> {
+  if (isMockMode) {
+    const db = readMockDb();
+    db.loopSections = (db.loopSections || []).filter((s: any) => s.id !== sectionId);
+    writeMockDb(db);
+    return;
+  }
+
+  const rows = await readSheet('loopSections!A:F');
+  if (!rows.length) return;
+  const filtered = rows.filter((r, i) => i === 0 || r[0] !== sectionId);
+  await writeRow(`loopSections!A1:F${filtered.length}`, filtered);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

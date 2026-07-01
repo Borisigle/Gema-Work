@@ -1,21 +1,23 @@
 .page {
-  padding-top: 32px;
-  padding-bottom: 60px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .header {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .title {
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: 6px;
+  font-size: 200%;
+  font-weight: 400;
+  margin-bottom: 4px;
 }
 
 .subtitle {
   color: var(--text-secondary);
-  font-size: 15px;
+  font-size: 16px;
+  font-family: var(--font-retro);
+  letter-spacing: 0.04em;
 }
 
 .empty {
@@ -29,21 +31,20 @@
 }
 
 .emptyIcon { font-size: 48px; margin-bottom: 8px; }
-.empty h3 { font-size: 20px; font-weight: 700; }
-.empty p { color: var(--text-secondary); font-size: 15px; }
+.empty h3 { font-size: 22px; color: var(--text-primary); font-family: var(--font-retro); }
+.empty p { color: var(--text-secondary); font-size: 15px; font-family: var(--font-retro); }
 
-/* Grid */
 .choreoGrid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .choreoCard {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 24px;
+  gap: 16px;
+  padding: 20px;
   text-decoration: none;
   cursor: pointer;
   position: relative;
@@ -65,6 +66,7 @@
 .choreoCard:hover {
   transform: translateX(4px);
   border-color: color-mix(in srgb, var(--color, var(--accent-1)) 40%, transparent);
+  box-shadow: 2px 2px 0 var(--win98-shadow), 3px 3px 12px rgba(255, 128, 192, 0.1);
 }
 
 .choreoCard:hover .cardArrow {
@@ -73,18 +75,16 @@
 }
 
 .cardNum {
-  width: 52px;
-  height: 52px;
-  min-width: 52px;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--color, var(--accent-1)) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color, var(--accent-1)) 25%, transparent);
-  border-radius: var(--radius-md);
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 800;
+  background: rgba(255, 179, 217, 0.08);
+  border: 1px solid rgba(255, 179, 217, 0.2);
+  font-family: var(--font-retro);
+  font-size: 22px;
   color: var(--color, var(--accent-1));
 }
 
@@ -95,18 +95,19 @@
 
 .choreoName {
   font-size: 18px;
-  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  font-family: var(--font-retro);
 }
 
 .songCount {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-family: var(--font-retro);
 }
 
 .songList {
@@ -119,12 +120,12 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 10px;
-  background: var(--bg-glass);
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.6);
   border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-secondary);
+  font-family: var(--font-retro);
 }
 
 .cardArrow {

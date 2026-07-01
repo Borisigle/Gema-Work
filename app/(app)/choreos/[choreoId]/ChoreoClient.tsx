@@ -8,12 +8,13 @@ interface Props {
   choreo: Choreo;
   groupId: string;
   color: string;
+  groupName: string;
 }
 
 const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-export default function ChoreoClient({ choreo, groupId, color }: Props) {
-  const [activeTab, setActiveTab] = useState<'player' | 'notes'>('player');
+export default function ChoreoClient({ choreo, groupId, color, groupName }: Props) {
+  const [activeTab, setActiveTab] = useState<'player' | 'notes' | 'sections'>('player');
   const [currentSongIdx, setCurrentSongIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -23,6 +24,33 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
   const [notes, setNotes] = useState('');
   const [notesStatus, setNotesStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [audioError, setAudioError] = useState(false);
+
+  // Nombre editable de la coreografía
+  const [choreoName, setChoreoName] = useState(choreo.name);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState(choreo.name);
+  const [nameStatus, setNameStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
+  // Secciones de práctica (loop sections)
+  interface LoopSection {
+    id: string;
+    choreoId: string;
+    songFile: string;
+    label: string;
+    startSec: number;
+    endSec: number;
+  }
+  const [sections, setSections] = useState<LoopSection[]>([]);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
+  const [isAddingSection, setIsAddingSection] = useState(false);
+  const [sectionLabel, setSectionLabel] = useState('');
+  const [startMin, setStartMin] = useState('0');
+  const [startSec, setStartSec] = useState('00');
+  const [endMin, setEndMin] = useState('0');
+  const [endSec, setEndSec] = useState('00');
+  const [sectionError, setSectionError] = useState('');
+  const [savingSection, setSavingSection] = useState(false);
+  const activeSectionRef = useRef<LoopSection | null>(null);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -40,12 +68,28 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
       .catch(() => {});
   }, [choreo.id]);
 
+  // Load practice sections on mount
+  useEffect(() => {
+    fetch(`/api/choreos/${choreo.id}/sections`)
+      .then(r => r.json())
+      .then(data => setSections(data.sections || []))
+      .catch(() => {});
+  }, [choreo.id]);
+
   // Audio event listeners
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const onTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+      const section = activeSectionRef.current;
+      if (section && audio.currentTime >= section.endSec) {
+        audio.pause();
+        audio.currentTime = section.endSec;
+        setIsPlaying(false);
+      }
+    };
     const onDurationChange = () => setDuration(audio.duration);
     const onEnded = () => {
       if (currentSongIdx < choreo.songs.length - 1) {
@@ -77,6 +121,7 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    exitSectionMode();
     setCurrentTime(0);
     setDuration(0);
     setAudioError(false);
@@ -99,6 +144,10 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
       audio.pause();
       setIsPlaying(false);
     } else {
+      const section = activeSectionRef.current;
+      if (section && audio.currentTime >= section.endSec - 0.15) {
+        audio.currentTime = section.startSec;
+      }
       audio.play().then(() => setIsPlaying(true)).catch(() => setAudioError(true));
     }
   }
@@ -107,6 +156,7 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
     const audio = audioRef.current;
     const bar = progressRef.current;
     if (!audio || !bar || !duration) return;
+    exitSectionMode();
     const rect = bar.getBoundingClientRect();
     const ratio = (e.clientX - rect.left) / rect.width;
     audio.currentTime = ratio * duration;
@@ -125,6 +175,120 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
     const m = Math.floor(s / 60);
     const sec = Math.floor(s % 60);
     return `${m}:${sec.toString().padStart(2, '0')}`;
+  }
+
+  // Parsea "0:30" o "30" a segundos. Devuelve null si el formato es invalido.
+  function parseMmSs(value: string): number | null {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    if (trimmed.includes(':')) {
+      const [mStr, sStr] = trimmed.split(':');
+      const m = parseInt(mStr, 10);
+      const s = parseInt(sStr, 10);
+      if (isNaN(m) || isNaN(s) || s < 0 || s > 59) return null;
+      return m * 60 + s;
+    }
+    const onlySec = parseFloat(trimmed);
+    return isNaN(onlySec) ? null : onlySec;
+  }
+
+  const sectionsForCurrentSong = sections.filter(s => s.songFile === currentSong?.file);
+
+  function playSection(section: { id: string; startSec: number; endSec: number }) {
+    const audio = audioRef.current;
+    if (!audio) return;
+    activeSectionRef.current = sections.find(s => s.id === section.id) || null;
+    setActiveSectionId(section.id);
+    setActiveTab('player');
+    audio.currentTime = section.startSec;
+    audio.play().then(() => setIsPlaying(true)).catch(() => setAudioError(true));
+  }
+
+  function exitSectionMode() {
+    activeSectionRef.current = null;
+    setActiveSectionId(null);
+  }
+
+  function openAddSection() {
+    setIsAddingSection(true);
+    setSectionLabel('');
+    const m = Math.floor(currentTime / 60);
+    const s = Math.floor(currentTime % 60);
+    setStartMin(String(m));
+    setStartSec(s.toString().padStart(2, '0'));
+    setEndMin('0');
+    setEndSec('00');
+    setSectionError('');
+  }
+
+  function cancelAddSection() {
+    setIsAddingSection(false);
+    setSectionError('');
+  }
+
+  async function saveSection() {
+    const sMin = parseInt(startMin, 10);
+    const sSec = parseInt(startSec, 10);
+    const eMin = parseInt(endMin, 10);
+    const eSec = parseInt(endSec, 10);
+
+    if (isNaN(sMin) || isNaN(sSec) || isNaN(eMin) || isNaN(eSec) ||
+        sSec < 0 || sSec > 59 || eSec < 0 || eSec > 59) {
+      setSectionError('Ingresá minutos y segundos válidos');
+      return;
+    }
+
+    const startSecTotal = sMin * 60 + sSec;
+    const endSecTotal = eMin * 60 + eSec;
+
+    if (endSecTotal <= startSecTotal) {
+      setSectionError('El final tiene que ser mayor al inicio');
+      return;
+    }
+
+    setSavingSection(true);
+    setSectionError('');
+    try {
+      const res = await fetch(`/api/choreos/${choreo.id}/sections`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          songFile: currentSong.file,
+          label: sectionLabel.trim() || 'Sección',
+          startSec: startSecTotal,
+          endSec: endSecTotal,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'No se pudo guardar');
+      }
+      const data = await res.json();
+      setSections(prev => [...prev, data.section]);
+      setIsAddingSection(false);
+    } catch (err: any) {
+      setSectionError(err.message || 'No se pudo guardar la sección');
+    } finally {
+      setSavingSection(false);
+    }
+  }
+
+  async function removeSection(sectionId: string) {
+    const ok = window.confirm('¿Borrar esta sección?');
+    if (!ok) return;
+
+    if (activeSectionId === sectionId) exitSectionMode();
+    setSections(prev => prev.filter(s => s.id !== sectionId));
+
+    try {
+      await fetch(`/api/choreos/${choreo.id}/sections`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sectionId }),
+      });
+    } catch {
+      // si falla, no hacemos rollback visual para no confundir; el profe puede reintentar
+    }
   }
 
   // Auto-save notes with debounce
@@ -146,8 +310,95 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
+  function startEditingName() {
+    setNameInput(choreoName);
+    setIsEditingName(true);
+    setNameStatus('idle');
+  }
+
+  function cancelEditingName() {
+    setIsEditingName(false);
+    setNameInput(choreoName);
+  }
+
+  async function saveName() {
+    const trimmed = nameInput.trim();
+    if (!trimmed) return;
+
+    setNameStatus('saving');
+    try {
+      const res = await fetch(`/api/choreos/${choreo.id}/name`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: trimmed }),
+      });
+      if (!res.ok) throw new Error('save failed');
+      setChoreoName(trimmed);
+      setIsEditingName(false);
+      setNameStatus('saved');
+      setTimeout(() => setNameStatus('idle'), 2000);
+    } catch {
+      setNameStatus('error');
+    }
+  }
+
+  function handleNameKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') saveName();
+    if (e.key === 'Escape') cancelEditingName();
+  }
+
   return (
     <div className={styles.choreoLayout} style={{ '--color': color } as React.CSSProperties}>
+      {/* Header: breadcrumb + nombre editable */}
+      <div className={styles.header}>
+        {isEditingName ? (
+          <div className={styles.nameEditRow}>
+            <input
+              id="choreo-name-input"
+              className={styles.nameInput}
+              value={nameInput}
+              onChange={e => setNameInput(e.target.value)}
+              onKeyDown={handleNameKeyDown}
+              autoFocus
+              maxLength={60}
+            />
+            <button
+              id="save-choreo-name-btn"
+              className="btn btn-primary btn-sm"
+              onClick={saveName}
+              disabled={nameStatus === 'saving' || !nameInput.trim()}
+            >
+              {nameStatus === 'saving' ? '...' : 'Guardar'}
+            </button>
+            <button className="btn btn-ghost btn-sm" onClick={cancelEditingName}>
+              Cancelar
+            </button>
+          </div>
+        ) : (
+          <div className={styles.nameRow}>
+            <h1 className={styles.title}>
+              <span className="text-gradient">{choreoName}</span>
+            </h1>
+            <button
+              id="edit-choreo-name-btn"
+              className={`btn btn-ghost btn-sm ${styles.editNameBtn}`}
+              onClick={startEditingName}
+              title="Editar nombre"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+            {nameStatus === 'saved' && <span className={styles.nameSavedMsg}>✓ Guardado</span>}
+            {nameStatus === 'error' && <span className={styles.nameErrorMsg}>Error al guardar</span>}
+          </div>
+        )}
+        <p className={styles.subtitle}>
+          {groupName} · {choreo.songs.length} {choreo.songs.length === 1 ? 'canción' : 'canciones'}
+        </p>
+      </div>
+
       {/* Hidden audio element */}
       <audio ref={audioRef} preload="metadata">
         <source src={`/audio/${currentSong.file}`} />
@@ -180,27 +431,43 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
           </svg>
           Notas
         </button>
+        <button
+          id="tab-sections"
+          className={`${styles.tab} ${activeTab === 'sections' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('sections')}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="11" width="3" height="6"/>
+            <rect x="10.5" y="7" width="3" height="10"/>
+            <rect x="18" y="3" width="3" height="14"/>
+          </svg>
+          Secciones{sectionsForCurrentSong.length > 0 ? ` (${sectionsForCurrentSong.length})` : ''}
+        </button>
       </div>
 
       {/* Player tab */}
       {activeTab === 'player' && (
         <div className={`card ${styles.playerCard} animate-fade-in`}>
-          {/* Now playing info */}
+          {/* Compact now playing */}
           <div className={styles.nowPlaying}>
-            <div className={styles.albumArt}>
-              <div className={`${styles.disc} ${isPlaying ? styles.spinning : ''}`}>
-                💎
-              </div>
+            <div className={styles.albumArtSmall}>
+              <div className={`${styles.disc} ${isPlaying ? styles.spinning : ''}`}>💎</div>
             </div>
             <div className={styles.songInfo}>
               <div className={styles.songBadge}>
                 {currentSongIdx + 1} / {choreo.songs.length}
               </div>
               <h2 className={styles.songTitle}>{currentSong.title}</h2>
-              <p className={styles.choreoNameSmall}>{choreo.name}</p>
+              <p className={styles.choreoNameSmall}>{choreoName}</p>
+              {activeSectionId && (
+                <div className={styles.activeSectionBadge}>
+                  🔁 {sections.find(s => s.id === activeSectionId)?.label}
+                  <button onClick={exitSectionMode} title="Salir de la sección">✕</button>
+                </div>
+              )}
               {audioError && (
                 <p className={styles.audioError}>
-                  ⚠️ Archivo de audio no encontrado. Subí el MP3 a <code>/public/audio/{currentSong.file}</code>
+                  ⚠️ Audio no encontrado en <code>/public/audio/{currentSong.file}</code>
                 </p>
               )}
             </div>
@@ -217,101 +484,92 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
               aria-label="Progreso de reproducción"
             >
               <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+              {duration > 0 && sectionsForCurrentSong.map(s => (
+                <div
+                  key={s.id}
+                  className={styles.sectionMarker}
+                  style={{
+                    left: `${(s.startSec / duration) * 100}%`,
+                    width: `${((s.endSec - s.startSec) / duration) * 100}%`,
+                  }}
+                  title={s.label}
+                />
+              ))}
               <div className={styles.progressThumb} style={{ left: `${progress}%` }} />
             </div>
             <span className={styles.timeLabel}>{formatTime(duration)}</span>
           </div>
 
-          {/* Controls */}
-          <div className={styles.controls}>
-            <button
-              id="prev-song-btn"
-              className={`btn btn-ghost ${styles.controlBtn}`}
-              onClick={prevSong}
-              disabled={currentSongIdx === 0}
-              title="Anterior"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" strokeWidth="2" stroke="currentColor" fill="none"/>
-              </svg>
-            </button>
-
-            <button
-              id="play-pause-btn"
-              className={styles.playBtn}
-              onClick={togglePlay}
-              title={isPlaying ? 'Pausar' : 'Reproducir'}
-            >
-              {isPlaying ? (
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+          {/* Controls + Speed + Volume — all in one row */}
+          <div className={styles.playerControls}>
+            <div className={styles.transportBtns}>
+              <button className="btn btn-ghost btn-sm" onClick={prevSong} disabled={currentSongIdx === 0} title="Anterior">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" strokeWidth="2" stroke="currentColor" fill="none"/>
                 </svg>
-              ) : (
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="5 3 19 12 5 21 5 3"/>
+              </button>
+              <button className={styles.playBtnSmall} onClick={togglePlay} title={isPlaying ? 'Pausar' : 'Reproducir'}>
+                {isPlaying ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                )}
+              </button>
+              <button className="btn btn-ghost btn-sm" onClick={nextSong} disabled={currentSongIdx === choreo.songs.length - 1} title="Siguiente">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" strokeWidth="2" stroke="currentColor" fill="none"/>
                 </svg>
-              )}
-            </button>
+              </button>
+            </div>
 
-            <button
-              id="next-song-btn"
-              className={`btn btn-ghost ${styles.controlBtn}`}
-              onClick={nextSong}
-              disabled={currentSongIdx === choreo.songs.length - 1}
-              title="Siguiente"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" strokeWidth="2" stroke="currentColor" fill="none"/>
+            <div className={styles.speedBtns}>
+              {SPEED_OPTIONS.map(s => (
+                <button
+                  key={s}
+                  className={`${styles.speedBtn} ${speed === s ? styles.speedActive : ''}`}
+                  onClick={() => setSpeed(s)}
+                >
+                  {s}x
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.volumeGroup}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
               </svg>
-            </button>
+              <input type="range" min="0" max="1" step="0.05" value={volume} onChange={e => setVolume(parseFloat(e.target.value))} className={styles.volumeSlider} />
+            </div>
           </div>
 
-          {/* Speed & Volume */}
-          <div className={styles.extras}>
-            {/* Playback speed */}
-            <div className={styles.extraGroup}>
-              <span className={styles.extraLabel}>
+          {/* Quick sections */}
+          {sectionsForCurrentSong.length > 0 && (
+            <div className={styles.quickSections}>
+              <span className={styles.quickSectionsLabel}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  <rect x="3" y="11" width="3" height="6"/><rect x="10.5" y="7" width="3" height="10"/><rect x="18" y="3" width="3" height="14"/>
                 </svg>
-                Velocidad
+                Secciones
               </span>
-              <div className={styles.speedBtns}>
-                {SPEED_OPTIONS.map(s => (
+              <div className={styles.quickSectionBtns}>
+                {sectionsForCurrentSong.map(s => (
                   <button
-                    key={s}
-                    id={`speed-${s}x`}
-                    className={`${styles.speedBtn} ${speed === s ? styles.speedActive : ''}`}
-                    onClick={() => setSpeed(s)}
+                    key={s.id}
+                    className={`${styles.quickSectionBtn} ${activeSectionId === s.id ? styles.quickSectionActive : ''}`}
+                    onClick={() => playSection(s)}
                   >
-                    {s}x
+                    <span className={styles.quickSectionName}>{s.label}</span>
+                    <span className={styles.quickSectionTime}>{formatTime(s.startSec)}–{formatTime(s.endSec)}</span>
                   </button>
                 ))}
               </div>
             </div>
-
-            {/* Volume */}
-            <div className={styles.extraGroup}>
-              <span className={styles.extraLabel}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                </svg>
-                Volumen
-              </span>
-              <input
-                id="volume-slider"
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={volume}
-                onChange={e => setVolume(parseFloat(e.target.value))}
-                className={styles.volumeSlider}
-              />
-              <span className={styles.volumeVal}>{Math.round(volume * 100)}%</span>
-            </div>
-          </div>
+          )}
 
           {/* Song list */}
           {choreo.songs.length > 1 && (
@@ -320,7 +578,6 @@ export default function ChoreoClient({ choreo, groupId, color }: Props) {
               {choreo.songs.map((song, idx) => (
                 <button
                   key={idx}
-                  id={`song-item-${idx}`}
                   className={`${styles.songItem} ${currentSongIdx === idx ? styles.songActive : ''}`}
                   onClick={() => { setCurrentSongIdx(idx); setIsPlaying(false); }}
                 >
@@ -376,6 +633,160 @@ Ejemplo:
 - Revisar formación en la intro
 - Música a 0.75x para practicar los pasos difíciles"
           />
+        </div>
+      )}
+
+      {/* Sections tab */}
+      {activeTab === 'sections' && (
+        <div className={`card ${styles.sectionsCard} animate-fade-in`}>
+          <div className={styles.sectionsCardHeader}>
+            <div>
+              <h3 className={styles.notesTitle}>Secciones de práctica</h3>
+              <p className={styles.notesSub}>
+                Marcá un fragmento de "{currentSong.title}" para repasarlo en loop manual
+              </p>
+            </div>
+            {!isAddingSection && (
+              <button id="add-section-btn" className="btn btn-primary btn-sm" onClick={openAddSection}>
+                + Nueva sección
+              </button>
+            )}
+          </div>
+
+          {isAddingSection && (
+            <div className={styles.addSectionForm}>
+              <input
+                id="section-label-input"
+                className={styles.sectionInput}
+                placeholder="Nombre (ej: Estribillo)"
+                value={sectionLabel}
+                onChange={e => setSectionLabel(e.target.value)}
+                maxLength={30}
+                autoFocus
+              />
+              <div className={styles.sectionTimeGroup}>
+                <span className={styles.timeLabel}>Inicio</span>
+                <input
+                  id="section-start-min"
+                  className={styles.timeInput}
+                  type="number"
+                  min="0"
+                  max="99"
+                  value={startMin}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+                    setStartMin(v);
+                    if (v.length === 2) document.getElementById('section-start-sec')?.focus();
+                  }}
+                />
+                <span className={styles.timeColon}>:</span>
+                <input
+                  id="section-start-sec"
+                  className={styles.timeInput}
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={startSec}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+                    setStartSec(v);
+                    if (v.length === 2) document.getElementById('section-end-min')?.focus();
+                  }}
+                />
+              </div>
+              <div className={styles.sectionTimeGroup}>
+                <span className={styles.timeLabel}>Fin</span>
+                <input
+                  id="section-end-min"
+                  className={styles.timeInput}
+                  type="number"
+                  min="0"
+                  max="99"
+                  value={endMin}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+                    setEndMin(v);
+                    if (v.length === 2) document.getElementById('section-end-sec')?.focus();
+                  }}
+                />
+                <span className={styles.timeColon}>:</span>
+                <input
+                  id="section-end-sec"
+                  className={styles.timeInput}
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={endSec}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+                    setEndSec(v);
+                  }}
+                />
+              </div>
+              <div className={styles.sectionFormActions}>
+                <button
+                  id="save-section-btn"
+                  className="btn btn-primary btn-sm"
+                  onClick={saveSection}
+                  disabled={savingSection}
+                >
+                  {savingSection ? 'Guardando...' : 'Guardar sección'}
+                </button>
+                <button className="btn btn-ghost btn-sm" onClick={cancelAddSection}>
+                  Cancelar
+                </button>
+              </div>
+              {sectionError && <p className={styles.sectionError}>{sectionError}</p>}
+            </div>
+          )}
+
+          {sectionsForCurrentSong.length === 0 && !isAddingSection ? (
+            <div className={styles.sectionsEmpty}>
+              <p>Todavía no hay secciones guardadas para este tema.</p>
+              <p className={styles.sectionsEmptySub}>
+                Usá "+ Nueva sección" para marcar, por ejemplo, el estribillo o un paso puntual.
+              </p>
+            </div>
+          ) : (
+            <div className={styles.sectionsList}>
+              {sectionsForCurrentSong.map(s => (
+                <div
+                  key={s.id}
+                  className={`${styles.sectionListItem} ${activeSectionId === s.id ? styles.sectionListItemActive : ''}`}
+                >
+                  <div className={styles.sectionListInfo}>
+                    <span className={styles.sectionListLabel}>{s.label}</span>
+                    <span className={styles.sectionListTime}>
+                      {formatTime(s.startSec)} – {formatTime(s.endSec)}
+                    </span>
+                  </div>
+                  <div className={styles.sectionListActions}>
+                    <button
+                      id={`section-btn-${s.id}`}
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => playSection(s)}
+                    >
+                      {activeSectionId === s.id ? '▶ Repetir' : '▶ Practicar'}
+                    </button>
+                    <button
+                      id={`section-delete-${s.id}`}
+                      className={styles.sectionListDelete}
+                      onClick={() => removeSection(s.id)}
+                      title="Borrar sección"
+                      aria-label="Borrar sección"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6"/>
+                        <path d="M14 11v6"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

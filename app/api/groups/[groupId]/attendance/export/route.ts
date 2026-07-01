@@ -13,7 +13,7 @@ export async function GET(
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
 
   const group = getGroupById(params.groupId);
-  if (!group || group.teacherId !== session.teacherId) {
+  if (!group || (group.teacherId !== session.teacherId && !session.isAdmin)) {
     return NextResponse.json({ error: 'Grupo no encontrado' }, { status: 404 });
   }
 

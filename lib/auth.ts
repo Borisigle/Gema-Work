@@ -10,10 +10,11 @@ export interface SessionPayload {
   teacherId: string;
   teacherName: string;
   username: string;
+  isAdmin?: boolean;
 }
 
 // Teacher credentials from environment variables
-const TEACHER_CREDENTIALS: Record<string, { id: string; name: string; pass: string }> = {
+const TEACHER_CREDENTIALS: Record<string, { id: string; name: string; pass: string; isAdmin?: boolean }> = {
   [process.env.TEACHER_CAMI_USER || 'cami']: {
     id: 'cami',
     name: 'Cami',
@@ -44,16 +45,23 @@ const TEACHER_CREDENTIALS: Record<string, { id: string; name: string; pass: stri
     name: 'Marian',
     pass: process.env.TEACHER_MARIAN_PASS || 'marian2026',
   },
+  // Usuario admin: ve y edita todos los grupos de todas las profes.
+  [process.env.TEACHER_SOFI_USER || 'sofi']: {
+    id: 'sofi',
+    name: 'Sofi',
+    pass: process.env.TEACHER_SOFI_PASS || 'sofi2026',
+    isAdmin: true,
+  },
 };
 
 export function validateCredentials(
   username: string,
   password: string
-): { id: string; name: string } | null {
+): { id: string; name: string; isAdmin?: boolean } | null {
   const cred = TEACHER_CREDENTIALS[username.toLowerCase()];
   if (!cred) return null;
   if (cred.pass !== password) return null;
-  return { id: cred.id, name: cred.name };
+  return { id: cred.id, name: cred.name, isAdmin: cred.isAdmin };
 }
 
 export async function createSession(payload: SessionPayload): Promise<string> {

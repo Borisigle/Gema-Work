@@ -1,37 +1,96 @@
 .page {
-  padding-top: 32px;
-  padding-bottom: 60px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .header {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .title {
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: 6px;
+  font-size: 200%;
+  font-weight: 400;
+  margin-bottom: 4px;
 }
 
 .subtitle {
   color: var(--text-secondary);
-  font-size: 15px;
+  font-size: 16px;
+  font-family: var(--font-retro);
+  letter-spacing: 0.04em;
 }
 
-/* Layout */
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.nameRow .title {
+  margin-bottom: 0;
+}
+
+.editNameBtn {
+  padding: 6px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.editNameBtn:hover {
+  color: var(--color);
+}
+
+.nameSavedMsg {
+  font-size: 14px;
+  color: var(--success);
+  font-family: var(--font-retro);
+}
+
+.nameErrorMsg {
+  font-size: 14px;
+  color: var(--danger);
+  font-family: var(--font-retro);
+}
+
+.nameEditRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.nameInput {
+  font-size: 20px;
+  padding: 6px 10px;
+  border: 2px solid var(--color);
+  background: var(--bg-card, transparent);
+  color: var(--text-primary);
+  min-width: 200px;
+  flex: 1;
+  font-family: var(--font-retro);
+}
+
+.nameInput:focus {
+  outline: none;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--color) 15%, transparent);
+}
+
 .choreoLayout {
-  --color: #8b5cf6;
+  --color: #c080ff;
 }
 
-/* Tabs */
 .tabs {
   display: flex;
-  gap: 4px;
-  margin-bottom: 20px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  padding: 4px;
+  gap: 2px;
+  margin-bottom: 16px;
+  background: #f0e8f0;
+  border-top: 2px solid var(--win98-shadow);
+  border-left: 2px solid var(--win98-shadow);
+  border-bottom: 2px solid var(--win98-highlight);
+  border-right: 2px solid var(--win98-highlight);
+  padding: 3px;
   width: fit-content;
 }
 
@@ -39,56 +98,52 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 24px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 15px;
+  padding: 8px 20px;
+  font-family: var(--font-retro);
+  font-size: 16px;
   border: none;
   cursor: pointer;
   transition: var(--transition);
   color: var(--text-muted);
   background: transparent;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .tab:hover {
   color: var(--text-primary);
+  background: rgba(255, 179, 217, 0.08);
 }
 
 .tabActive {
   background: var(--color, var(--accent-1)) !important;
   color: white !important;
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--color, var(--accent-1)) 40%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-/* ── Player ── */
 .playerCard {
-  padding: 32px;
+  padding: 20px;
   max-width: 640px;
 }
 
-/* Now playing */
 .nowPlaying {
   display: flex;
   align-items: center;
-  gap: 24px;
-  margin-bottom: 32px;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
-.albumArt {
-  width: 100px;
-  height: 100px;
-  min-width: 100px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color, #8b5cf6), color-mix(in srgb, var(--color, #8b5cf6) 60%, #ec4899));
+.albumArtSmall {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  background: linear-gradient(135deg, var(--color, #c080ff), color-mix(in srgb, var(--color, #c080ff) 60%, #ff80c0));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
-  box-shadow:
-    0 0 30px color-mix(in srgb, var(--color, #8b5cf6) 40%, transparent),
-    0 8px 32px rgba(0, 0, 0, 0.4);
-  position: relative;
+  font-size: 20px;
+  box-shadow: 1px 1px 0 var(--win98-shadow), 2px 2px 6px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--win98-highlight);
 }
 
 .disc {
@@ -104,69 +159,66 @@
 .songBadge {
   display: inline-flex;
   align-items: center;
-  padding: 3px 10px;
-  background: color-mix(in srgb, var(--color, #8b5cf6) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color, #8b5cf6) 25%, transparent);
-  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  background: rgba(255, 179, 217, 0.12);
+  border: 1px solid rgba(255, 179, 217, 0.25);
   font-size: 11px;
-  font-weight: 700;
-  color: var(--color, #a78bfa);
+  color: #9060c0;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 8px;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  font-family: var(--font-retro);
 }
 
 .songTitle {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 18px;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  font-family: var(--font-retro);
 }
 
 .choreoNameSmall {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
+  font-family: var(--font-retro);
 }
 
 .audioError {
-  margin-top: 10px;
-  font-size: 12px;
+  margin-top: 6px;
+  font-size: 13px;
   color: var(--danger);
-  padding: 8px 12px;
+  padding: 6px 10px;
   background: var(--danger-bg);
-  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 107, 138, 0.2);
+  font-family: var(--font-retro);
 }
 
 .audioError code {
-  background: rgba(248, 113, 113, 0.2);
+  background: rgba(255, 107, 138, 0.15);
   padding: 1px 4px;
-  border-radius: 3px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
-/* Progress */
 .progressSection {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
 .timeLabel {
-  font-family: var(--font-display);
-  font-size: 13px;
+  font-family: var(--font-retro);
+  font-size: 16px;
   color: var(--text-muted);
-  font-weight: 600;
-  min-width: 36px;
+  min-width: 40px;
   text-align: center;
 }
 
 .progressBar {
   flex: 1;
   height: 6px;
-  background: var(--bg-glass);
+  background: #f0e8f0;
   border: 1px solid var(--border);
-  border-radius: var(--radius-full);
   cursor: pointer;
   position: relative;
   transition: var(--transition);
@@ -178,8 +230,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color, #8b5cf6), color-mix(in srgb, var(--color, #8b5cf6) 60%, #ec4899));
-  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--color, #c080ff), color-mix(in srgb, var(--color, #c080ff) 60%, #ff80c0));
   transition: width 0.1s linear;
 }
 
@@ -189,118 +240,151 @@
   transform: translate(-50%, -50%);
   width: 14px;
   height: 14px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: #faf4f6;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   transition: left 0.1s linear;
   opacity: 0;
+  border: 1px solid var(--border);
 }
 
 .progressBar:hover .progressThumb {
   opacity: 1;
 }
 
-/* Controls */
 .controls {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.playerControls {
+  display: flex;
+  align-items: center;
   gap: 16px;
-  margin-bottom: 32px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
 }
 
-.controlBtn {
-  width: 48px !important;
-  height: 48px !important;
-  padding: 0 !important;
-  border-radius: 50% !important;
-  font-size: 22px;
-  color: var(--text-secondary);
+.transportBtns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.controlBtn:hover:not(:disabled) {
-  color: var(--text-primary);
-  background: var(--bg-glass) !important;
-}
-
-.controlBtn:disabled {
-  opacity: 0.3;
-}
-
-.playBtn {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color, #8b5cf6), color-mix(in srgb, var(--color, #8b5cf6) 60%, #ec4899));
-  border: none;
+.playBtnSmall {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--color, #c080ff), color-mix(in srgb, var(--color, #c080ff) 60%, #ff80c0));
+  border: 2px solid var(--win98-highlight);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow:
-    0 0 20px color-mix(in srgb, var(--color, #8b5cf6) 50%, transparent),
-    0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 1px 1px 0 var(--win98-shadow);
   transition: var(--transition);
+  flex-shrink: 0;
 }
 
-.playBtn:hover {
-  transform: scale(1.08);
-  box-shadow:
-    0 0 30px color-mix(in srgb, var(--color, #8b5cf6) 70%, transparent),
-    0 12px 32px rgba(0, 0, 0, 0.4);
+.playBtnSmall:hover {
+  transform: scale(1.05);
 }
 
-.playBtn:active {
-  transform: scale(0.96);
+.playBtnSmall:active {
+  transform: scale(0.95);
 }
 
-/* Extras */
-.extras {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  margin-bottom: 24px;
-}
-
-.extraGroup {
+.volumeGroup {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+  color: var(--text-muted);
 }
 
-.extraLabel {
+.volumeSlider {
+  width: 80px;
+  accent-color: var(--color, var(--accent-1));
+  cursor: pointer;
+}
+
+.quickSections {
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.quickSectionsLabel {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
-  min-width: 80px;
+  font-family: var(--font-retro);
+  margin-bottom: 10px;
+}
+
+.quickSectionBtns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quickSectionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: #faf4f6;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-retro);
+}
+
+.quickSectionBtn:hover {
+  border-color: var(--color, var(--accent-1));
+  background: rgba(255, 179, 217, 0.06);
+}
+
+.quickSectionActive {
+  border-color: var(--color, var(--accent-1)) !important;
+  background: color-mix(in srgb, var(--color, var(--accent-1)) 10%, white) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color, var(--accent-1)) 20%, transparent);
+}
+
+.quickSectionName {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.quickSectionTime {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
 .speedBtns {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .speedBtn {
-  padding: 5px 12px;
-  border-radius: var(--radius-full);
+  padding: 4px 8px;
   border: 1px solid var(--border);
-  background: var(--bg-glass);
+  background: #faf4f6;
   color: var(--text-secondary);
-  font-family: var(--font-display);
+  font-family: var(--font-retro);
   font-size: 13px;
-  font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -311,83 +395,70 @@
 }
 
 .speedActive {
-  background: color-mix(in srgb, var(--color, var(--accent-1)) 20%, transparent) !important;
+  background: color-mix(in srgb, var(--color, var(--accent-1)) 12%, white) !important;
   border-color: var(--color, var(--accent-1)) !important;
   color: var(--color, var(--accent-1)) !important;
 }
 
-.volumeSlider {
-  flex: 1;
-  max-width: 140px;
-  accent-color: var(--color, var(--accent-1));
-  cursor: pointer;
-}
-
 .volumeVal {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 600;
+  font-family: var(--font-retro);
+  font-size: 16px;
   color: var(--text-muted);
   min-width: 32px;
 }
 
-/* Song list */
 .songList {
   border-top: 1px solid var(--border);
-  padding-top: 20px;
+  padding-top: 16px;
 }
 
 .songListTitle {
   font-size: 14px;
-  font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 12px;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  font-family: var(--font-retro);
 }
 
 .songItem {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
+  gap: 10px;
+  padding: 10px 12px;
   border: 1px solid transparent;
   width: 100%;
   text-align: left;
   background: transparent;
   cursor: pointer;
   transition: var(--transition);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .songItem:hover {
-  background: var(--bg-glass);
+  background: rgba(255, 255, 255, 0.6);
   border-color: var(--border);
 }
 
 .songActive {
-  background: color-mix(in srgb, var(--color, var(--accent-1)) 12%, transparent) !important;
-  border-color: color-mix(in srgb, var(--color, var(--accent-1)) 25%, transparent) !important;
+  background: rgba(255, 179, 217, 0.08) !important;
+  border-color: rgba(255, 179, 217, 0.2) !important;
 }
 
 .songItemNum {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 700;
+  font-family: var(--font-retro);
+  font-size: 16px;
   color: var(--text-muted);
   width: 20px;
 }
 
 .songItemName {
   flex: 1;
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 600;
+  font-family: var(--font-retro);
+  font-size: 16px;
   color: var(--text-primary);
 }
 
-/* Playing indicator bars */
 .playingIndicator {
   display: flex;
   align-items: flex-end;
@@ -398,7 +469,6 @@
 .playingIndicator span {
   width: 3px;
   background: var(--color, var(--accent-1));
-  border-radius: 2px;
   animation: equalizer 0.8s ease infinite;
 }
 
@@ -411,9 +481,8 @@
   50% { transform: scaleY(0.4); }
 }
 
-/* ── Notes ── */
 .notesCard {
-  padding: 28px;
+  padding: 24px;
   max-width: 800px;
 }
 
@@ -422,19 +491,20 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .notesTitle {
   font-size: 18px;
-  font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 4px;
+  font-family: var(--font-retro);
 }
 
 .notesSub {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
+  font-family: var(--font-retro);
 }
 
 .saveStatus {
@@ -446,33 +516,33 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
   padding: 4px 10px;
-  border-radius: var(--radius-full);
+  font-family: var(--font-retro);
 }
 
 .statusSaving {
   color: var(--warning);
   background: var(--warning-bg);
+  border: 1px solid rgba(240, 192, 64, 0.2);
 }
 
 .statusSaved {
   color: var(--success);
   background: var(--success-bg);
+  border: 1px solid rgba(102, 204, 138, 0.2);
 }
 
 .notesArea {
   width: 100%;
   min-height: 400px;
-  background: var(--bg-glass);
+  background: #faf4f6;
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 20px;
-  font-family: var(--font-body);
-  font-size: 15px;
+  padding: 16px;
+  font-family: var(--font-retro);
+  font-size: 18px;
   color: var(--text-primary);
-  line-height: 1.7;
+  line-height: 1.8;
   resize: vertical;
   outline: none;
   transition: var(--transition);
@@ -480,18 +550,234 @@
 
 .notesArea::placeholder {
   color: var(--text-muted);
-  line-height: 1.7;
+  line-height: 1.8;
+  font-family: var(--font-retro);
 }
 
 .notesArea:focus {
   border-color: var(--color, var(--accent-1));
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color, var(--accent-1)) 15%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color, var(--accent-1)) 10%, transparent);
 }
 
 @media (max-width: 640px) {
-  .playerCard { padding: 20px; }
-  .nowPlaying { flex-direction: column; text-align: center; }
-  .albumArt { width: 80px; height: 80px; font-size: 32px; }
+  .playerCard { padding: 16px; }
+  .playerControls { flex-wrap: wrap; gap: 10px; }
+  .volumeGroup { margin-left: 0; width: 100%; }
+  .volumeSlider { flex: 1; }
   .tabs { width: 100%; }
   .tab { flex: 1; justify-content: center; }
+}
+
+.sectionMarker {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: rgba(255, 128, 192, 0.2);
+  pointer-events: none;
+}
+
+.activeSectionBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 4px 10px;
+  background: rgba(255, 179, 217, 0.1);
+  border: 1px solid var(--color);
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: var(--font-retro);
+}
+
+.activeSectionBadge button {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 2px;
+}
+
+.activeSectionBadge button:hover {
+  color: var(--danger);
+}
+
+.sectionsCard {
+  padding: 24px;
+}
+
+.sectionsCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.sectionsEmpty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-family: var(--font-retro);
+  font-size: 16px;
+}
+
+.sectionsEmptySub {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.sectionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.5);
+  transition: var(--transition);
+}
+
+.sectionListItemActive {
+  border-color: var(--color);
+  background: rgba(255, 179, 217, 0.08);
+}
+
+.sectionListInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sectionListLabel {
+  font-family: var(--font-retro);
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.sectionListTime {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-family: var(--font-retro);
+}
+
+.sectionListActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.sectionListDelete {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.sectionListDelete:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.addSectionForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 14px;
+  background: rgba(255, 179, 217, 0.06);
+  border: 1px solid rgba(255, 179, 217, 0.2);
+}
+
+.sectionInput {
+  flex: 1;
+  min-width: 160px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: #faf4f6;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-retro);
+}
+
+.sectionTimeGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.timeLabel {
+  font-family: var(--font-retro);
+  font-size: 14px;
+  color: var(--text-muted);
+  min-width: 30px;
+  text-transform: uppercase;
+}
+
+.timeInput {
+  width: 44px;
+  padding: 8px 4px;
+  border: 1px solid var(--border);
+  background: #faf4f6;
+  color: var(--text-primary);
+  font-size: 16px;
+  text-align: center;
+  font-family: var(--font-retro);
+  -moz-appearance: textfield;
+}
+
+.timeInput::-webkit-outer-spin-button,
+.timeInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.timeColon {
+  font-family: var(--font-retro);
+  font-size: 20px;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.sectionInput:focus, .timeInput:focus {
+  outline: none;
+  border-color: var(--color);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color) 10%, transparent);
+}
+
+.sectionFormActions {
+  display: flex;
+  gap: 8px;
+}
+
+.sectionError {
+  width: 100%;
+  color: var(--danger);
+  font-size: 14px;
+  margin-top: 2px;
+  font-family: var(--font-retro);
+}
+
+@media (max-width: 640px) {
+  .sectionsCardHeader { flex-direction: column; }
+  .addSectionForm { flex-direction: column; align-items: stretch; }
+  .sectionTimeGroup { justify-content: center; }
 }

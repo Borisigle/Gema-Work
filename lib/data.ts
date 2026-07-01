@@ -4,13 +4,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type DayOfWeek =
-  | 'lunes'
-  | 'martes'
-  | 'miercoles'
-  | 'jueves'
-  | 'viernes'
-  | 'sabado'
-  | 'domingo';
+  | "lunes"
+  | "martes"
+  | "miercoles"
+  | "jueves"
+  | "viernes"
+  | "sabado"
+  | "domingo";
 
 export interface Choreo {
   id: string;
@@ -42,46 +42,53 @@ export interface Teacher {
 // ─────────────────────────────────────────────────────────────────────────────
 export const TEACHERS: Teacher[] = [
   {
-    id: 'cami',
-    name: 'Cami',
-    username: 'cami',
-    groupIds: ['cami-mega-crew', 'cami-mega-kids', 'cami-bratz', 'cami-girly-team', 'cami-mega-teens', 'cami-golden'],
-    color: '#c084fc', // purple
+    id: "cami",
+    name: "Cami",
+    username: "cami",
+    groupIds: [
+      "cami-mega-crew",
+      "cami-mega-kids",
+      "cami-bratz",
+      "cami-girly-team",
+      "cami-mega-teens",
+      "cami-golden",
+    ],
+    color: "#c084fc", // purple
   },
   {
-    id: 'ani',
-    name: 'Ani',
-    username: 'ani',
-    groupIds: ['ani-reggaeton-femme', 'ani-reggaeton'],
-    color: '#f472b6', // pink
+    id: "ani",
+    name: "Ani",
+    username: "ani",
+    groupIds: ["ani-reggaeton-femme", "ani-reggaeton"],
+    color: "#f472b6", // pink
   },
   {
-    id: 'nasya',
-    name: 'Nasya',
-    username: 'nasya',
-    groupIds: ['nasya-mix-dance', 'nasya-urban-kids', 'nasya-street-dance'],
-    color: '#34d399', // emerald
+    id: "nasya",
+    name: "Nasya",
+    username: "nasya",
+    groupIds: ["nasya-mix-dance", "nasya-urban-kids", "nasya-street-dance"],
+    color: "#34d399", // emerald
   },
   {
-    id: 'lulu',
-    name: 'Lulu',
-    username: 'lulu',
-    groupIds: ['lulu-jazz-conte'],
-    color: '#fbbf24', // amber
+    id: "lulu",
+    name: "Lulu",
+    username: "lulu",
+    groupIds: ["lulu-jazz-conte"],
+    color: "#fbbf24", // amber
   },
   {
-    id: 'lucas',
-    name: 'Lucas',
-    username: 'lucas',
-    groupIds: ['lucas-ladys', 'lucas-latino'],
-    color: '#60a5fa', // blue
+    id: "lucas",
+    name: "Lucas",
+    username: "lucas",
+    groupIds: ["lucas-ladys", "lucas-latino"],
+    color: "#60a5fa", // blue
   },
   {
-    id: 'marian',
-    name: 'Marian',
-    username: 'marian',
-    groupIds: ['marian-arabe-inicial', 'marian-arabe-intermedio'],
-    color: '#fb923c', // orange
+    id: "marian",
+    name: "Marian",
+    username: "marian",
+    groupIds: ["marian-arabe-inicial", "marian-arabe-intermedio"],
+    color: "#fb923c", // orange
   },
 ];
 
@@ -91,220 +98,468 @@ export const TEACHERS: Teacher[] = [
 export const GROUPS: Group[] = [
   // ── CAMI ──────────────────────────────────────────────────────────────────
   {
-    id: 'cami-mega-crew',
-    teacherId: 'cami',
-    name: 'Mega Crew',
-    days: ['miercoles'],
+    id: "cami-mega-crew",
+    teacherId: "cami",
+    name: "Mega Crew",
+    days: ["miercoles"],
     choreos: [
       {
-        id: 'cami-mega-crew-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'cami/mega-crew/remix-1.mp3' }],
+        id: "cami-mega-crew-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "cami/mega-crew/remix-1.mp3" }],
+      },
+      {
+        id: "cami-mega-crew-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "cami/mega-crew/remix-2.mp3" }],
+      },
+      {
+        id: "cami-mega-crew-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "cami/mega-crew/remix-3.mp3" }],
+      },
+      {
+        id: "cami-mega-crew-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "cami/mega-crew/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'cami-mega-kids',
-    teacherId: 'cami',
-    name: 'Mega Crew Kids',
-    days: ['miercoles'],
+    id: "cami-mega-kids",
+    teacherId: "cami",
+    name: "Mega Crew Kids",
+    days: ["miercoles"],
     choreos: [
       {
-        id: 'cami-mega-kids-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'cami/mega-kids/remix-1.mp3' }],
+        id: "cami-mega-kids-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "cami/mega-kids/remix-1.mp3" }],
+      },
+      {
+        id: "cami-mega-kids-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "cami/mega-kids/remix-2.mp3" }],
+      },
+      {
+        id: "cami-mega-kids-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "cami/mega-kids/remix-3.mp3" }],
+      },
+      {
+        id: "cami-mega-kids-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "cami/mega-kids/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'cami-bratz',
-    teacherId: 'cami',
-    name: 'Bratz',
-    days: ['lunes'],
+    id: "cami-bratz",
+    teacherId: "cami",
+    name: "Bratz",
+    days: ["lunes"],
     choreos: [
       {
-        id: 'cami-bratz-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'cami/bratz/remix-1.mp3' }],
+        id: "cami-bratz-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "cami/bratz/remix-1.mp3" }],
+      },
+      {
+        id: "cami-bratz-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "cami/bratz/remix-2.mp3" }],
+      },
+      {
+        id: "cami-bratz-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "cami/bratz/remix-3.mp3" }],
+      },
+      {
+        id: "cami-bratz-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "cami/bratz/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'cami-girly-team',
-    teacherId: 'cami',
-    name: 'Girly Team',
-    days: ['lunes'],
+    id: "cami-girly-team",
+    teacherId: "cami",
+    name: "Girly Team",
+    days: ["lunes"],
     choreos: [
       {
-        id: 'cami-girly-team-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'cami/girly-team/remix-1.mp3' }],
+        id: "cami-girly-team-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "cami/girly-team/remix-1.mp3" }],
+      },
+      {
+        id: "cami-girly-team-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "cami/girly-team/remix-2.mp3" }],
+      },
+      {
+        id: "cami-girly-team-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "cami/girly-team/remix-3.mp3" }],
+      },
+      {
+        id: "cami-girly-team-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "cami/girly-team/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'cami-mega-teens',
-    teacherId: 'cami',
-    name: 'Mega Teens',
-    days: ['viernes'],
+    id: "cami-mega-teens",
+    teacherId: "cami",
+    name: "Mega Teens",
+    days: ["viernes"],
     choreos: [
       {
-        id: 'cami-mega-teens-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'cami/mega-teens/remix-1.mp3' }],
+        id: "cami-mega-teens-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "cami/mega-teens/remix-1.mp3" }],
+      },
+      {
+        id: "cami-mega-teens-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "cami/mega-teens/remix-2.mp3" }],
+      },
+      {
+        id: "cami-mega-teens-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "cami/mega-teens/remix-3.mp3" }],
+      },
+      {
+        id: "cami-mega-teens-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "cami/mega-teens/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'cami-golden',
-    teacherId: 'cami',
-    name: 'Golden',
-    days: ['viernes'],
+    id: "cami-golden",
+    teacherId: "cami",
+    name: "Golden",
+    days: ["viernes"],
     choreos: [
       {
-        id: 'cami-golden-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'cami/golden/remix-1.mp3' }],
+        id: "cami-golden-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "cami/golden/remix-1.mp3" }],
+      },
+      {
+        id: "cami-golden-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "cami/golden/remix-2.mp3" }],
+      },
+      {
+        id: "cami-golden-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "cami/golden/remix-3.mp3" }],
+      },
+      {
+        id: "cami-golden-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "cami/golden/remix-4.mp3" }],
       },
     ],
   },
 
   // ── ANI ───────────────────────────────────────────────────────────────────
   {
-    id: 'ani-reggaeton-femme',
-    teacherId: 'ani',
-    name: 'Reggaeton Femme',
-    days: ['martes', 'jueves'],
+    id: "ani-reggaeton-femme",
+    teacherId: "ani",
+    name: "Reggaeton Femme",
+    days: ["martes", "jueves"],
     choreos: [
       {
-        id: 'ani-reggaeton-femme-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'ani/reggaeton-femme/remix-1.mp3' }],
+        id: "ani-reggaeton-femme-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "ani/reggaeton-femme/remix-1.mp3" }],
+      },
+      {
+        id: "ani-reggaeton-femme-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "ani/reggaeton-femme/remix-2.mp3" }],
+      },
+      {
+        id: "ani-reggaeton-femme-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "ani/reggaeton-femme/remix-3.mp3" }],
+      },
+      {
+        id: "ani-reggaeton-femme-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "ani/reggaeton-femme/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'ani-reggaeton',
-    teacherId: 'ani',
-    name: 'Reggaeton',
-    days: ['martes', 'jueves'],
+    id: "ani-reggaeton",
+    teacherId: "ani",
+    name: "Reggaeton",
+    days: ["martes", "jueves"],
     choreos: [
       {
-        id: 'ani-reggaeton-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'ani/reggaeton/remix-1.mp3' }],
+        id: "ani-reggaeton-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "ani/reggaeton/remix-1.mp3" }],
+      },
+      {
+        id: "ani-reggaeton-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "ani/reggaeton/remix-2.mp3" }],
+      },
+      {
+        id: "ani-reggaeton-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "ani/reggaeton/remix-3.mp3" }],
+      },
+      {
+        id: "ani-reggaeton-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "ani/reggaeton/remix-4.mp3" }],
       },
     ],
   },
 
   // ── NASYA ─────────────────────────────────────────────────────────────────
   {
-    id: 'nasya-mix-dance',
-    teacherId: 'nasya',
-    name: 'Mix Dance',
-    days: ['martes', 'jueves'],
+    id: "nasya-mix-dance",
+    teacherId: "nasya",
+    name: "Mix Dance",
+    days: ["martes", "jueves"],
     choreos: [
       {
-        id: 'nasya-mix-dance-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'nasya/mix-dance/remix-1.mp3' }],
+        id: "nasya-mix-dance-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "nasya/mix-dance/remix-1.mp3" }],
+      },
+      {
+        id: "nasya-mix-dance-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "nasya/mix-dance/remix-2.mp3" }],
+      },
+      {
+        id: "nasya-mix-dance-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "nasya/mix-dance/remix-3.mp3" }],
+      },
+      {
+        id: "nasya-mix-dance-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "nasya/mix-dance/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'nasya-urban-kids',
-    teacherId: 'nasya',
-    name: 'Urban Kids',
-    days: ['martes', 'jueves'],
+    id: "nasya-urban-kids",
+    teacherId: "nasya",
+    name: "Urban Kids",
+    days: ["martes", "jueves"],
     choreos: [
       {
-        id: 'nasya-urban-kids-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'nasya/urban-kids/remix-1.mp3' }],
+        id: "nasya-urban-kids-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "nasya/urban-kids/remix-1.mp3" }],
+      },
+      {
+        id: "nasya-urban-kids-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "nasya/urban-kids/remix-2.mp3" }],
+      },
+      {
+        id: "nasya-urban-kids-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "nasya/urban-kids/remix-3.mp3" }],
+      },
+      {
+        id: "nasya-urban-kids-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "nasya/urban-kids/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'nasya-street-dance',
-    teacherId: 'nasya',
-    name: 'Street Dance',
-    days: ['martes', 'jueves'],
+    id: "nasya-street-dance",
+    teacherId: "nasya",
+    name: "Street Dance",
+    days: ["martes", "jueves"],
     choreos: [
       {
-        id: 'nasya-street-dance-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'nasya/street-dance/remix-1.mp3' }],
+        id: "nasya-street-dance-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "nasya/street-dance/remix-1.mp3" }],
+      },
+      {
+        id: "nasya-street-dance-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "nasya/street-dance/remix-2.mp3" }],
+      },
+      {
+        id: "nasya-street-dance-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "nasya/street-dance/remix-3.mp3" }],
+      },
+      {
+        id: "nasya-street-dance-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "nasya/street-dance/remix-4.mp3" }],
       },
     ],
   },
 
   // ── LULU ──────────────────────────────────────────────────────────────────
   {
-    id: 'lulu-jazz-conte',
-    teacherId: 'lulu',
-    name: 'Jazz Conté',
-    days: ['viernes'],
+    id: "lulu-jazz-conte",
+    teacherId: "lulu",
+    name: "Jazz Conté",
+    days: ["viernes"],
     choreos: [
       {
-        id: 'lulu-jazz-conte-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'lulu/jazz-conte/remix-1.mp3' }],
+        id: "lulu-jazz-conte-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "lulu/jazz-conte/remix-1.mp3" }],
+      },
+      {
+        id: "lulu-jazz-conte-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "lulu/jazz-conte/remix-2.mp3" }],
+      },
+      {
+        id: "lulu-jazz-conte-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "lulu/jazz-conte/remix-3.mp3" }],
+      },
+      {
+        id: "lulu-jazz-conte-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "lulu/jazz-conte/remix-4.mp3" }],
       },
     ],
   },
 
   // ── LUCAS ─────────────────────────────────────────────────────────────────
   {
-    id: 'lucas-ladys',
-    teacherId: 'lucas',
-    name: 'Ladys',
-    days: ['martes', 'jueves'],
+    id: "lucas-ladys",
+    teacherId: "lucas",
+    name: "Ladys",
+    days: ["martes", "jueves"],
     choreos: [
       {
-        id: 'lucas-ladys-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'lucas/ladys/remix-1.mp3' }],
+        id: "lucas-ladys-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "lucas/ladys/remix-1.mp3" }],
+      },
+      {
+        id: "lucas-ladys-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "lucas/ladys/remix-2.mp3" }],
+      },
+      {
+        id: "lucas-ladys-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "lucas/ladys/remix-3.mp3" }],
+      },
+      {
+        id: "lucas-ladys-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "lucas/ladys/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'lucas-latino',
-    teacherId: 'lucas',
-    name: 'Latino',
-    days: ['martes', 'jueves'],
+    id: "lucas-latino",
+    teacherId: "lucas",
+    name: "Latino",
+    days: ["martes", "jueves"],
     choreos: [
       {
-        id: 'lucas-latino-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'lucas/latino/remix-1.mp3' }],
+        id: "lucas-latino-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "lucas/latino/remix-1.mp3" }],
+      },
+      {
+        id: "lucas-latino-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "lucas/latino/remix-2.mp3" }],
+      },
+      {
+        id: "lucas-latino-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "lucas/latino/remix-3.mp3" }],
+      },
+      {
+        id: "lucas-latino-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "lucas/latino/remix-4.mp3" }],
       },
     ],
   },
 
   // ── MARIAN ────────────────────────────────────────────────────────────────
   {
-    id: 'marian-arabe-inicial',
-    teacherId: 'marian',
-    name: 'Árabe Inicial',
-    days: ['lunes', 'miercoles'],
+    id: "marian-arabe-inicial",
+    teacherId: "marian",
+    name: "Árabe Inicial",
+    days: ["lunes", "miercoles"],
     choreos: [
       {
-        id: 'marian-arabe-inicial-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'marian/arabe-inicial/remix-1.mp3' }],
+        id: "marian-arabe-inicial-coreo1",
+        name: "Coreo 1",
+        songs: [{ title: "Remix 1", file: "marian/arabe-inicial/remix-1.mp3" }],
+      },
+      {
+        id: "marian-arabe-inicial-coreo2",
+        name: "Coreo 2",
+        songs: [{ title: "Remix 2", file: "marian/arabe-inicial/remix-2.mp3" }],
+      },
+      {
+        id: "marian-arabe-inicial-coreo3",
+        name: "Coreo 3",
+        songs: [{ title: "Remix 3", file: "marian/arabe-inicial/remix-3.mp3" }],
+      },
+      {
+        id: "marian-arabe-inicial-coreo4",
+        name: "Coreo 4",
+        songs: [{ title: "Remix 4", file: "marian/arabe-inicial/remix-4.mp3" }],
       },
     ],
   },
   {
-    id: 'marian-arabe-intermedio',
-    teacherId: 'marian',
-    name: 'Árabe Intermedio',
-    days: ['lunes', 'miercoles'],
+    id: "marian-arabe-intermedio",
+    teacherId: "marian",
+    name: "Árabe Intermedio",
+    days: ["lunes", "miercoles"],
     choreos: [
       {
-        id: 'marian-arabe-intermedio-coreo1',
-        name: 'Coreo 1',
-        songs: [{ title: 'Remix 1', file: 'marian/arabe-intermedio/remix-1.mp3' }],
+        id: "marian-arabe-intermedio-coreo1",
+        name: "Coreo 1",
+        songs: [
+          { title: "Remix 1", file: "marian/arabe-intermedio/remix-1.mp3" },
+        ],
+      },
+      {
+        id: "marian-arabe-intermedio-coreo2",
+        name: "Coreo 2",
+        songs: [
+          { title: "Remix 2", file: "marian/arabe-intermedio/remix-2.mp3" },
+        ],
+      },
+      {
+        id: "marian-arabe-intermedio-coreo3",
+        name: "Coreo 3",
+        songs: [
+          { title: "Remix 3", file: "marian/arabe-intermedio/remix-3.mp3" },
+        ],
+      },
+      {
+        id: "marian-arabe-intermedio-coreo4",
+        name: "Coreo 4",
+        songs: [
+          { title: "Remix 4", file: "marian/arabe-intermedio/remix-4.mp3" },
+        ],
       },
     ],
   },
@@ -322,7 +577,8 @@ export function getGroupById(id: string): Group | undefined {
   return GROUPS.find((g) => g.id === id);
 }
 
-export function getGroupsByTeacher(teacherId: string): Group[] {
+export function getGroupsByTeacher(teacherId: string, isAdmin?: boolean): Group[] {
+  if (isAdmin) return GROUPS;
   return GROUPS.filter((g) => g.teacherId === teacherId);
 }
 
@@ -332,13 +588,13 @@ export function getTeacherByUsername(username: string): Teacher | undefined {
 
 export function getDayLabel(day: DayOfWeek): string {
   const labels: Record<DayOfWeek, string> = {
-    lunes: 'Lunes',
-    martes: 'Martes',
-    miercoles: 'Miércoles',
-    jueves: 'Jueves',
-    viernes: 'Viernes',
-    sabado: 'Sábado',
-    domingo: 'Domingo',
+    lunes: "Lunes",
+    martes: "Martes",
+    miercoles: "Miércoles",
+    jueves: "Jueves",
+    viernes: "Viernes",
+    sabado: "Sábado",
+    domingo: "Domingo",
   };
   return labels[day];
 }
@@ -358,6 +614,16 @@ export function getDayNumber(day: DayOfWeek): number {
 }
 
 export const MONTH_NAMES_ES = [
-  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
 ];

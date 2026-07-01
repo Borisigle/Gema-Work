@@ -2,6 +2,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getSession } from '@/lib/auth';
 import { getGroupById, getTeacherById } from '@/lib/data';
+import { getAllChoreoNameOverrides } from '@/lib/sheets';
 import styles from './choreos.module.css';
 
 interface Props {
@@ -13,10 +14,13 @@ export default async function ChoreosPage({ params }: Props) {
   if (!session) redirect('/login');
 
   const group = getGroupById(params.groupId);
-  if (!group || group.teacherId !== session.teacherId) notFound();
+  if (!group || (group.teacherId !== session.teacherId && !session.isAdmin)) notFound();
 
-  const teacher = getTeacherById(session.teacherId);
+  const teacher = session.isAdmin ? getTeacherById(group.teacherId) : getTeacherById(session.teacherId);
   const color = teacher?.color || '#8b5cf6';
+
+  // Los nombres pueden haber sido editados por el profe; los overrides pisan al default hardcodeado
+  const nameOverrides = await getAllChoreoNameOverrides();
 
   return (
     <div className={`container ${styles.page}`}>
@@ -58,7 +62,7 @@ export default async function ChoreosPage({ params }: Props) {
               </div>
 
               <div className={styles.cardContent}>
-                <h2 className={styles.choreoName}>{choreo.name}</h2>
+                <h2 className={styles.choreoName}>{nameOverrides[choreo.id] || choreo.name}</h2>
                 <div className={styles.songCount}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M9 18V5l12-2v13"/>

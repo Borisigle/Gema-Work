@@ -1,10 +1,11 @@
 .dashboard {
-  padding-top: 40px;
-  padding-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 .header {
-  margin-bottom: 40px;
+  margin-bottom: 8px;
 }
 
 .greetingBadge {
@@ -12,52 +13,51 @@
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  background: color-mix(in srgb, var(--color, #8b5cf6) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color, #8b5cf6) 30%, transparent);
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color, #a78bfa);
-  margin-bottom: 16px;
-  letter-spacing: 0.04em;
+  background: rgba(255, 179, 217, 0.12);
+  border: 1px solid rgba(255, 179, 217, 0.25);
+  font-family: var(--font-retro);
+  font-size: 16px;
+  color: #c06090;
+  margin-bottom: 12px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .title {
-  font-size: 36px;
-  font-weight: 800;
-  margin-bottom: 8px;
+  font-size: 200%;
+  font-weight: 400;
+  margin-bottom: 4px;
 }
 
 .subtitle {
   font-size: 16px;
   color: var(--text-secondary);
+  font-family: var(--font-retro);
 }
 
-/* Groups grid */
 .groupsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
 
 .groupCard {
   overflow: hidden;
   cursor: default;
   transition: var(--transition);
+  position: relative;
 }
 
 .groupCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 var(--win98-shadow), 4px 4px 16px rgba(255, 128, 192, 0.12);
 }
 
 .cardHeader {
-  padding: 24px 24px 20px;
+  padding: 16px 16px 14px;
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 12px;
   border-bottom: 1px solid var(--border);
   position: relative;
 }
@@ -68,22 +68,20 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--color, #8b5cf6), transparent);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pink), var(--lavender), var(--baby-blue));
 }
 
 .groupIcon {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  background: color-mix(in srgb, var(--color, #8b5cf6) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color, #8b5cf6) 25%, transparent);
-  border-radius: var(--radius-md);
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  background: rgba(255, 179, 217, 0.1);
+  border: 1px solid rgba(255, 179, 217, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 18px;
 }
 
 .groupInfo {
@@ -92,43 +90,54 @@
 }
 
 .groupName {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.teacherTag {
+  display: inline-block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9060c0;
+  background: rgba(217, 179, 255, 0.12);
+  padding: 2px 8px;
+  border: 1px solid rgba(217, 179, 255, 0.25);
+  margin-bottom: 4px;
+  font-family: var(--font-retro);
+}
+
 .days {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .dayBadge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 10px;
-  background: var(--bg-glass);
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.6);
   border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-family: var(--font-retro);
 }
 
 .cardBody {
-  padding: 20px 24px 24px;
+  padding: 14px 16px 16px;
 }
 
 .stats {
   display: flex;
   align-items: center;
   gap: 0;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .stat {
@@ -138,50 +147,39 @@
 
 .statNum {
   display: block;
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--text-primary);
+  font-family: var(--font-retro);
+  font-size: 32px;
+  color: var(--accent-1);
   line-height: 1;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .statLabel {
   font-size: 12px;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-family: var(--font-retro);
 }
 
 .statDivider {
   width: 1px;
-  height: 40px;
+  height: 36px;
   background: var(--border);
 }
 
 .actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .actionBtn {
   flex: 1;
   font-size: 14px;
-  padding: 11px 16px;
-}
-
-/* Override primary button color with teacher color */
-a.actionBtn.btn-primary {
-  background: linear-gradient(135deg, var(--color, #8b5cf6), color-mix(in srgb, var(--color, #8b5cf6) 60%, #ec4899));
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--color, #8b5cf6) 40%, transparent);
-}
-
-a.actionBtn.btn-primary:hover {
-  box-shadow: 0 8px 30px color-mix(in srgb, var(--color, #8b5cf6) 60%, transparent);
+  padding: 10px 14px;
 }
 
 @media (max-width: 640px) {
-  .title { font-size: 28px; }
+  .title { font-size: 150%; }
   .groupsGrid { grid-template-columns: 1fr; }
 }

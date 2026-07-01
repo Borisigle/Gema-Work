@@ -1,0 +1,156 @@
+.page {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 200%;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 16px;
+  max-width: 560px;
+  font-family: var(--font-retro);
+  letter-spacing: 0.04em;
+}
+
+.addCard {
+  display: flex;
+  gap: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.addInput {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  background: #faf4f6;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-family: var(--font-retro);
+}
+
+.addInput:focus {
+  outline: none;
+  border-color: var(--accent-1);
+  box-shadow: 0 0 6px rgba(255, 128, 192, 0.15);
+}
+
+.errorMsg {
+  color: var(--danger);
+  font-size: 14px;
+  margin-bottom: 12px;
+  font-family: var(--font-retro);
+}
+
+.sectionLabel {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin: 20px 0 8px;
+  font-family: var(--font-retro);
+}
+
+.listCard {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inactiveCard {
+  opacity: 0.75;
+}
+
+.studentRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.inactiveRow {
+  color: var(--text-muted);
+}
+
+.studentNum {
+  font-family: var(--font-retro);
+  font-size: 16px;
+  color: var(--text-muted);
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.studentName {
+  flex: 1;
+  font-family: var(--font-retro);
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.inactiveRow .studentName {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.emptyInline {
+  padding: 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-family: var(--font-retro);
+}
+
+.loadingState {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-retro);
+  font-size: 14px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 32px;
+  gap: 8px;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.emptyState h3 {
+  font-size: 22px;
+  color: var(--text-primary);
+  font-family: var(--font-retro);
+}
+
+.emptyState p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-family: var(--font-retro);
+}
+
+@media (max-width: 480px) {
+  .title { font-size: 150%; }
+  .addCard { flex-direction: column; }
+  .addInput { min-width: 100%; }
+  .studentRow { padding: 10px 10px; gap: 8px; }
+  .studentName { font-size: 16px; }
+}

@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
       teacherId: teacher.id,
       teacherName: teacher.name,
       username: username.trim().toLowerCase(),
+      isAdmin: teacher.isAdmin || false,
     });
 
     const response = NextResponse.json({ success: true, teacher });

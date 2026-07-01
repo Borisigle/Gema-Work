@@ -4,505 +4,589 @@
       "id": "cami-mega-crew-std-1",
       "groupId": "cami-mega-crew",
       "name": "Sofía Rodríguez",
-      "active": true
+      "active": false,
+      "createdAt": "2026-04-01"
     },
     {
       "id": "cami-mega-crew-std-2",
       "groupId": "cami-mega-crew",
       "name": "Valentina López",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-03"
     },
     {
       "id": "cami-mega-crew-std-3",
       "groupId": "cami-mega-crew",
       "name": "Martina Gómez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-06"
     },
     {
       "id": "cami-mega-crew-std-4",
       "groupId": "cami-mega-crew",
       "name": "Lucía Díaz",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-08"
     },
     {
       "id": "cami-mega-crew-std-5",
       "groupId": "cami-mega-crew",
       "name": "Florencia Álvarez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-11"
     },
     {
       "id": "cami-mega-crew-std-6",
       "groupId": "cami-mega-crew",
       "name": "Camila Fernández",
-      "active": true
+      "active": false,
+      "createdAt": "2026-04-13"
     },
     {
       "id": "cami-mega-crew-std-7",
       "groupId": "cami-mega-crew",
       "name": "Catalina Romero",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-16"
     },
     {
       "id": "cami-mega-kids-std-1",
       "groupId": "cami-mega-kids",
       "name": "Mateo Rossi",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-18"
     },
     {
       "id": "cami-mega-kids-std-2",
       "groupId": "cami-mega-kids",
       "name": "Thiago López",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-21"
     },
     {
       "id": "cami-mega-kids-std-3",
       "groupId": "cami-mega-kids",
       "name": "Benjamín García",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-23"
     },
     {
       "id": "cami-mega-kids-std-4",
       "groupId": "cami-mega-kids",
       "name": "Bautista Díaz",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-26"
     },
     {
       "id": "cami-mega-kids-std-5",
       "groupId": "cami-mega-kids",
       "name": "Felipe Alarcón",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-28"
     },
     {
       "id": "cami-mega-kids-std-6",
       "groupId": "cami-mega-kids",
       "name": "Olivia Fernández",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-01"
     },
     {
       "id": "cami-mega-kids-std-7",
       "groupId": "cami-mega-kids",
       "name": "Emma Romero",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-03"
     },
     {
       "id": "cami-bratz-std-1",
       "groupId": "cami-bratz",
       "name": "Zoe Moreno",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-06"
     },
     {
       "id": "cami-bratz-std-2",
       "groupId": "cami-bratz",
       "name": "Mía Perez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-08"
     },
     {
       "id": "cami-bratz-std-3",
       "groupId": "cami-bratz",
       "name": "Lola Sánchez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-11"
     },
     {
       "id": "cami-bratz-std-4",
       "groupId": "cami-bratz",
       "name": "Alma Castro",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-13"
     },
     {
       "id": "cami-bratz-std-5",
       "groupId": "cami-bratz",
       "name": "Juana Blanco",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-16"
     },
     {
       "id": "cami-girly-team-std-1",
       "groupId": "cami-girly-team",
       "name": "Morena Torres",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-18"
     },
     {
       "id": "cami-girly-team-std-2",
       "groupId": "cami-girly-team",
       "name": "Isabella Juárez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-21"
     },
     {
       "id": "cami-girly-team-std-3",
       "groupId": "cami-girly-team",
       "name": "Kiara Ramírez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-23"
     },
     {
       "id": "cami-girly-team-std-4",
       "groupId": "cami-girly-team",
       "name": "Delfina Gómez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-26"
     },
     {
       "id": "cami-girly-team-std-5",
       "groupId": "cami-girly-team",
       "name": "Jazmín Sosa",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-28"
     },
     {
       "id": "cami-mega-teens-std-1",
       "groupId": "cami-mega-teens",
       "name": "Santiago Medina",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-31"
     },
     {
       "id": "cami-mega-teens-std-2",
       "groupId": "cami-mega-teens",
       "name": "Lucas Núñez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-02"
     },
     {
       "id": "cami-mega-teens-std-3",
       "groupId": "cami-mega-teens",
       "name": "Matías Valenzuela",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-05"
     },
     {
       "id": "cami-mega-teens-std-4",
       "groupId": "cami-mega-teens",
       "name": "Nicolás Peralta",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-07"
     },
     {
       "id": "cami-mega-teens-std-5",
       "groupId": "cami-mega-teens",
       "name": "Joaquín Cabrera",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-10"
     },
     {
       "id": "cami-golden-std-1",
       "groupId": "cami-golden",
       "name": "Elena Ortiz",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-12"
     },
     {
       "id": "cami-golden-std-2",
       "groupId": "cami-golden",
       "name": "Margarita Rojas",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-15"
     },
     {
       "id": "cami-golden-std-3",
       "groupId": "cami-golden",
       "name": "Beatriz Herrera",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-17"
     },
     {
       "id": "cami-golden-std-4",
       "groupId": "cami-golden",
       "name": "Estela Giménez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-20"
     },
     {
       "id": "cami-golden-std-5",
       "groupId": "cami-golden",
       "name": "Patricia Toledo",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-22"
     },
     {
       "id": "ani-reggaeton-femme-std-1",
       "groupId": "ani-reggaeton-femme",
       "name": "Ámbar Luna",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-25"
     },
     {
       "id": "ani-reggaeton-femme-std-2",
       "groupId": "ani-reggaeton-femme",
       "name": "Ludmila Godoy",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-27"
     },
     {
       "id": "ani-reggaeton-femme-std-3",
       "groupId": "ani-reggaeton-femme",
       "name": "Sol Vega",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-01"
     },
     {
       "id": "ani-reggaeton-femme-std-4",
       "groupId": "ani-reggaeton-femme",
       "name": "Luna Kardian",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-03"
     },
     {
       "id": "ani-reggaeton-femme-std-5",
       "groupId": "ani-reggaeton-femme",
       "name": "Priscila Paez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-06"
     },
     {
       "id": "ani-reggaeton-std-1",
       "groupId": "ani-reggaeton",
       "name": "Renzo Juárez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-08"
     },
     {
       "id": "ani-reggaeton-std-2",
       "groupId": "ani-reggaeton",
       "name": "Enzo Benítez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-11"
     },
     {
       "id": "ani-reggaeton-std-3",
       "groupId": "ani-reggaeton",
       "name": "Ignacio Morales",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-13"
     },
     {
       "id": "ani-reggaeton-std-4",
       "groupId": "ani-reggaeton",
       "name": "Santino Gutiérrez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-16"
     },
     {
       "id": "ani-reggaeton-std-5",
       "groupId": "ani-reggaeton",
       "name": "Lautaro Flores",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-18"
     },
     {
       "id": "nasya-mix-dance-std-1",
       "groupId": "nasya-mix-dance",
       "name": "Ciro Vera",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-21"
     },
     {
       "id": "nasya-mix-dance-std-2",
       "groupId": "nasya-mix-dance",
       "name": "Gael Ledesma",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-23"
     },
     {
       "id": "nasya-mix-dance-std-3",
       "groupId": "nasya-mix-dance",
       "name": "Luan Silva",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-26"
     },
     {
       "id": "nasya-mix-dance-std-4",
       "groupId": "nasya-mix-dance",
       "name": "Bastián Correa",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-28"
     },
     {
       "id": "nasya-mix-dance-std-5",
       "groupId": "nasya-mix-dance",
       "name": "Noah Torres",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-01"
     },
     {
       "id": "nasya-urban-kids-std-1",
       "groupId": "nasya-urban-kids",
       "name": "Milo Juárez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-03"
     },
     {
       "id": "nasya-urban-kids-std-2",
       "groupId": "nasya-urban-kids",
       "name": "Ian Peralta",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-06"
     },
     {
       "id": "nasya-urban-kids-std-3",
       "groupId": "nasya-urban-kids",
       "name": "Teo Kroll",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-08"
     },
     {
       "id": "nasya-urban-kids-std-4",
       "groupId": "nasya-urban-kids",
       "name": "Leonel Galarza",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-11"
     },
     {
       "id": "nasya-urban-kids-std-5",
       "groupId": "nasya-urban-kids",
       "name": "Valentino Rossi",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-13"
     },
     {
       "id": "nasya-street-dance-std-1",
       "groupId": "nasya-street-dance",
       "name": "Dante Ortiz",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-16"
     },
     {
       "id": "nasya-street-dance-std-2",
       "groupId": "nasya-street-dance",
       "name": "Bruno Medina",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-18"
     },
     {
       "id": "nasya-street-dance-std-3",
       "groupId": "nasya-street-dance",
       "name": "Simón Espinoza",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-21"
     },
     {
       "id": "nasya-street-dance-std-4",
       "groupId": "nasya-street-dance",
       "name": "Fidel Arce",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-23"
     },
     {
       "id": "nasya-street-dance-std-5",
       "groupId": "nasya-street-dance",
       "name": "Alma Fuentes",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-26"
     },
     {
       "id": "lulu-jazz-conte-std-1",
       "groupId": "lulu-jazz-conte",
       "name": "Victoria Quiroga",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-28"
     },
     {
       "id": "lulu-jazz-conte-std-2",
       "groupId": "lulu-jazz-conte",
       "name": "Clara Novoa",
-      "active": true
+      "active": true,
+      "createdAt": "2026-05-31"
     },
     {
       "id": "lulu-jazz-conte-std-3",
       "groupId": "lulu-jazz-conte",
       "name": "Julieta Funes",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-02"
     },
     {
       "id": "lulu-jazz-conte-std-4",
       "groupId": "lulu-jazz-conte",
       "name": "Paula Duarte",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-05"
     },
     {
       "id": "lulu-jazz-conte-std-5",
       "groupId": "lulu-jazz-conte",
       "name": "Martina Mansilla",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-07"
     },
     {
       "id": "lucas-ladys-std-1",
       "groupId": "lucas-ladys",
       "name": "Mirta Acuña",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-10"
     },
     {
       "id": "lucas-ladys-std-2",
       "groupId": "lucas-ladys",
       "name": "Susana Moyano",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-12"
     },
     {
       "id": "lucas-ladys-std-3",
       "groupId": "lucas-ladys",
       "name": "Alicia Ferreyra",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-15"
     },
     {
       "id": "lucas-ladys-std-4",
       "groupId": "lucas-ladys",
       "name": "Gladys Bustos",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-17"
     },
     {
       "id": "lucas-ladys-std-5",
       "groupId": "lucas-ladys",
       "name": "Norma Soria",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-20"
     },
     {
       "id": "lucas-latino-std-1",
       "groupId": "lucas-latino",
       "name": "Juan Carlos",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-22"
     },
     {
       "id": "lucas-latino-std-2",
       "groupId": "lucas-latino",
       "name": "Alberto Gómez",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-25"
     },
     {
       "id": "lucas-latino-std-3",
       "groupId": "lucas-latino",
       "name": "Jorge Funes",
-      "active": true
+      "active": true,
+      "createdAt": "2026-06-27"
     },
     {
       "id": "lucas-latino-std-4",
       "groupId": "lucas-latino",
       "name": "Roberto Duarte",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-01"
     },
     {
       "id": "lucas-latino-std-5",
       "groupId": "lucas-latino",
       "name": "Daniel Peralta",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-03"
     },
     {
       "id": "marian-arabe-inicial-std-1",
       "groupId": "marian-arabe-inicial",
       "name": "Yasmin Alí",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-06"
     },
     {
       "id": "marian-arabe-inicial-std-2",
       "groupId": "marian-arabe-inicial",
       "name": "Fatima Bella",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-08"
     },
     {
       "id": "marian-arabe-inicial-std-3",
       "groupId": "marian-arabe-inicial",
       "name": "Samira Carim",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-11"
     },
     {
       "id": "marian-arabe-inicial-std-4",
       "groupId": "marian-arabe-inicial",
       "name": "Soraya Daher",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-13"
     },
     {
       "id": "marian-arabe-inicial-std-5",
       "groupId": "marian-arabe-inicial",
       "name": "Layla Echeverría",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-16"
     },
     {
       "id": "marian-arabe-intermedio-std-1",
       "groupId": "marian-arabe-intermedio",
       "name": "Mariam Halabi",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-18"
     },
     {
       "id": "marian-arabe-intermedio-std-2",
       "groupId": "marian-arabe-intermedio",
       "name": "Zahra Issa",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-21"
     },
     {
       "id": "marian-arabe-intermedio-std-3",
       "groupId": "marian-arabe-intermedio",
       "name": "Amina Jabour",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-23"
     },
     {
       "id": "marian-arabe-intermedio-std-4",
       "groupId": "marian-arabe-intermedio",
       "name": "Salma Kanaan",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-26"
     },
     {
       "id": "marian-arabe-intermedio-std-5",
       "groupId": "marian-arabe-intermedio",
       "name": "Karima Latouf",
-      "active": true
+      "active": true,
+      "createdAt": "2026-04-28"
     }
   ],
   "attendance": [
@@ -7856,6 +7940,13 @@
       "choreoId": "cami-mega-crew-coreo1",
       "content": "MINTO EW98234509324 SDFOPISDJGFKSDGMFKDFGM,.",
       "updatedAt": "2026-06-22T01:27:42.502Z"
+    }
+  ],
+  "choreoNames": [
+    {
+      "choreoId": "cami-mega-crew-coreo1",
+      "name": "Torero",
+      "updatedAt": "2026-06-24T00:17:52.274Z"
     }
   ]
 }

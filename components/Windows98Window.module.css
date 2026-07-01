@@ -1,0 +1,67 @@
+.window {
+  background: var(--bg-card);
+  border-top: 2px solid var(--win98-highlight);
+  border-left: 2px solid var(--win98-highlight);
+  border-bottom: 2px solid var(--win98-shadow);
+  border-right: 2px solid var(--win98-shadow);
+  box-shadow: 3px 3px 0 var(--win98-shadow), 4px 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  background: var(--win98-titlebar);
+  border-bottom: 2px solid var(--border);
+  user-select: none;
+}
+
+.titlebarLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.titlebarText {
+  font-family: var(--font-retro);
+  font-size: 16px;
+  color: #4a2040;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.titlebarDots {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.dot:hover {
+  transform: scale(1.15);
+}
+
+.dotYellow { background: #ffe066; }
+.dotGreen { background: #66cc66; }
+.dotPink { background: #ff80b0; }
+
+.body {
+  padding: 16px;
+}
