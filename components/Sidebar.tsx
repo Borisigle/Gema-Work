@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { GROUPS, getTeacherById } from '@/lib/data';
 import type { Group } from '@/lib/data';
 import styles from './Sidebar.module.css';
@@ -15,14 +15,16 @@ interface SidebarProps {
 export default function Sidebar({ teacherName, teacherId, isAdmin }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const teacher = getTeacherById(teacherId);
   const groups: Group[] = isAdmin
     ? GROUPS
     : GROUPS.filter(g => teacher?.groupIds.includes(g.id));
 
-  // Extract current groupId from pathname if on a group page
+  // Extract current groupId from pathname or search params
   const groupMatch = pathname.match(/\/groups\/([^/]+)/);
-  const currentGroupId = groupMatch ? groupMatch[1] : null;
+  const searchGroupId = searchParams.get('groupId');
+  const currentGroupId = groupMatch?.[1] || searchGroupId || null;
   const currentGroup = currentGroupId ? groups.find(g => g.id === currentGroupId) : null;
 
   async function handleLogout() {

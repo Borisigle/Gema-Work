@@ -401,7 +401,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
 
       {/* Hidden audio element */}
       <audio ref={audioRef} preload="metadata">
-        <source src={`/audio/${currentSong.file}`} />
+        <source src={currentSong.file.startsWith('http') ? currentSong.file : `/audio/${currentSong.file}`} />
       </audio>
 
       {/* Tabs */}
@@ -467,7 +467,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
               )}
               {audioError && (
                 <p className={styles.audioError}>
-                  ⚠️ Audio no encontrado en <code>/public/audio/{currentSong.file}</code>
+                  ⚠️ Audio no encontrado: <code>{currentSong.file.startsWith('http') ? currentSong.file : `/public/audio/${currentSong.file}`}</code>
                 </p>
               )}
             </div>

@@ -48,10 +48,20 @@ export default async function ChoreoPage({ params, searchParams }: Props) {
 
   return (
     <div className={`container ${styles.page}`}>
+      {/* Back button */}
+      <Link href={`/groups/${group.id}/choreos`} className="backBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+        </svg>
+        Volver a Coreos
+      </Link>
+
       <div className="breadcrumb">
         <Link href="/dashboard">Dashboard</Link>
         <span className="breadcrumb-sep">›</span>
         <Link href={`/groups/${group.id}/choreos`}>{group.name}</Link>
+        <span className="breadcrumb-sep">›</span>
+        <span>{effectiveName}</span>
       </div>
 
       <ChoreoClient

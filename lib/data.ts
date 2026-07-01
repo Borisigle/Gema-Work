@@ -111,7 +111,7 @@ export const GROUPS: Group[] = [
       {
         id: "cami-mega-crew-coreo2",
         name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "cami/mega-crew/remix-2.mp3" }],
+        songs: [{ title: "Vampiros", file: "https://res.cloudinary.com/drdfbjkn/video/upload/v1782940844/VAMPIROS_kqdny0.mp3" }],
       },
       {
         id: "cami-mega-crew-coreo3",
@@ -139,7 +139,7 @@ export const GROUPS: Group[] = [
       {
         id: "cami-mega-kids-coreo2",
         name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "cami/mega-kids/remix-2.mp3" }],
+        songs: [{ title: "Shine", file: "https://res.cloudinary.com/drdfbjkn/video/upload/v1782940922/51-SHINE-GEMA_COMPANY_pttrwv.mp3" }],
       },
       {
         id: "cami-mega-kids-coreo3",

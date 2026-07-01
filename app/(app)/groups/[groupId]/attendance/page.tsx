@@ -29,11 +29,19 @@ export default async function AttendancePage({ params }: Props) {
 
   return (
     <div className={`container ${styles.page}`}>
+      {/* Back button */}
+      <Link href="/dashboard" className="backBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+        </svg>
+        Volver
+      </Link>
+
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <Link href="/dashboard">Dashboard</Link>
         <span className="breadcrumb-sep">›</span>
-        <span>{group.name}</span>
+        <Link href={`/groups/${params.groupId}/attendance`}>{group.name}</Link>
         <span className="breadcrumb-sep">›</span>
         <span>Asistencia</span>
       </div>

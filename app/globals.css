@@ -450,6 +450,27 @@ h1, h2, h3, h4, h5, h6 {
   color: #4a2040;
 }
 
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-family: var(--font-retro);
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 16px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.6);
+  transition: var(--transition);
+}
+
+.backBtn:hover {
+  color: var(--accent-1);
+  border-color: var(--accent-1);
+  background: rgba(255, 179, 217, 0.06);
+}
+
 .breadcrumb {
   display: flex;
   align-items: center;
