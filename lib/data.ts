@@ -113,16 +113,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 2",
         songs: [{ title: "Vampiros", file: "https://res.cloudinary.com/drdfbjkn/video/upload/v1782940844/VAMPIROS_kqdny0.mp3" }],
       },
-      {
-        id: "cami-mega-crew-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "cami/mega-crew/remix-3.mp3" }],
-      },
-      {
-        id: "cami-mega-crew-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "cami/mega-crew/remix-4.mp3" }],
-      },
     ],
   },
   {
@@ -140,16 +130,6 @@ export const GROUPS: Group[] = [
         id: "cami-mega-kids-coreo2",
         name: "Coreo 2",
         songs: [{ title: "Shine", file: "https://res.cloudinary.com/drdfbjkn/video/upload/v1782940922/51-SHINE-GEMA_COMPANY_pttrwv.mp3" }],
-      },
-      {
-        id: "cami-mega-kids-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "cami/mega-kids/remix-3.mp3" }],
-      },
-      {
-        id: "cami-mega-kids-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "cami/mega-kids/remix-4.mp3" }],
       },
     ],
   },
@@ -169,16 +149,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 2",
         songs: [{ title: "Remix 2", file: "cami/bratz/remix-2.mp3" }],
       },
-      {
-        id: "cami-bratz-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "cami/bratz/remix-3.mp3" }],
-      },
-      {
-        id: "cami-bratz-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "cami/bratz/remix-4.mp3" }],
-      },
     ],
   },
   {
@@ -196,16 +166,6 @@ export const GROUPS: Group[] = [
         id: "cami-girly-team-coreo2",
         name: "Coreo 2",
         songs: [{ title: "Remix 2", file: "cami/girly-team/remix-2.mp3" }],
-      },
-      {
-        id: "cami-girly-team-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "cami/girly-team/remix-3.mp3" }],
-      },
-      {
-        id: "cami-girly-team-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "cami/girly-team/remix-4.mp3" }],
       },
     ],
   },
@@ -225,16 +185,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 2",
         songs: [{ title: "Remix 2", file: "cami/mega-teens/remix-2.mp3" }],
       },
-      {
-        id: "cami-mega-teens-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "cami/mega-teens/remix-3.mp3" }],
-      },
-      {
-        id: "cami-mega-teens-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "cami/mega-teens/remix-4.mp3" }],
-      },
     ],
   },
   {
@@ -253,16 +203,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 2",
         songs: [{ title: "Remix 2", file: "cami/golden/remix-2.mp3" }],
       },
-      {
-        id: "cami-golden-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "cami/golden/remix-3.mp3" }],
-      },
-      {
-        id: "cami-golden-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "cami/golden/remix-4.mp3" }],
-      },
     ],
   },
 
@@ -278,21 +218,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 1",
         songs: [{ title: "Remix 1", file: "ani/reggaeton-femme/remix-1.mp3" }],
       },
-      {
-        id: "ani-reggaeton-femme-coreo2",
-        name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "ani/reggaeton-femme/remix-2.mp3" }],
-      },
-      {
-        id: "ani-reggaeton-femme-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "ani/reggaeton-femme/remix-3.mp3" }],
-      },
-      {
-        id: "ani-reggaeton-femme-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "ani/reggaeton-femme/remix-4.mp3" }],
-      },
     ],
   },
   {
@@ -305,21 +230,6 @@ export const GROUPS: Group[] = [
         id: "ani-reggaeton-coreo1",
         name: "Coreo 1",
         songs: [{ title: "Remix 1", file: "ani/reggaeton/remix-1.mp3" }],
-      },
-      {
-        id: "ani-reggaeton-coreo2",
-        name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "ani/reggaeton/remix-2.mp3" }],
-      },
-      {
-        id: "ani-reggaeton-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "ani/reggaeton/remix-3.mp3" }],
-      },
-      {
-        id: "ani-reggaeton-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "ani/reggaeton/remix-4.mp3" }],
       },
     ],
   },
@@ -336,21 +246,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 1",
         songs: [{ title: "Remix 1", file: "nasya/mix-dance/remix-1.mp3" }],
       },
-      {
-        id: "nasya-mix-dance-coreo2",
-        name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "nasya/mix-dance/remix-2.mp3" }],
-      },
-      {
-        id: "nasya-mix-dance-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "nasya/mix-dance/remix-3.mp3" }],
-      },
-      {
-        id: "nasya-mix-dance-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "nasya/mix-dance/remix-4.mp3" }],
-      },
     ],
   },
   {
@@ -362,22 +257,7 @@ export const GROUPS: Group[] = [
       {
         id: "nasya-urban-kids-coreo1",
         name: "Coreo 1",
-        songs: [{ title: "Remix 1", file: "nasya/urban-kids/remix-1.mp3" }],
-      },
-      {
-        id: "nasya-urban-kids-coreo2",
-        name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "nasya/urban-kids/remix-2.mp3" }],
-      },
-      {
-        id: "nasya-urban-kids-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "nasya/urban-kids/remix-3.mp3" }],
-      },
-      {
-        id: "nasya-urban-kids-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "nasya/urban-kids/remix-4.mp3" }],
+        songs: [{ title: "No Cap", file: "https://res.cloudinary.com/drdfbjkn/video/upload/v1783015431/no_cap_urban_bwofea.mp3" }],
       },
     ],
   },
@@ -390,22 +270,7 @@ export const GROUPS: Group[] = [
       {
         id: "nasya-street-dance-coreo1",
         name: "Coreo 1",
-        songs: [{ title: "Remix 1", file: "nasya/street-dance/remix-1.mp3" }],
-      },
-      {
-        id: "nasya-street-dance-coreo2",
-        name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "nasya/street-dance/remix-2.mp3" }],
-      },
-      {
-        id: "nasya-street-dance-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "nasya/street-dance/remix-3.mp3" }],
-      },
-      {
-        id: "nasya-street-dance-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "nasya/street-dance/remix-4.mp3" }],
+        songs: [{ title: "Demons", file: "https://res.cloudinary.com/drdfbjkn/video/upload/v1783015435/demons_street_x2qpsf.mp3" }],
       },
     ],
   },
@@ -422,21 +287,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 1",
         songs: [{ title: "Remix 1", file: "lulu/jazz-conte/remix-1.mp3" }],
       },
-      {
-        id: "lulu-jazz-conte-coreo2",
-        name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "lulu/jazz-conte/remix-2.mp3" }],
-      },
-      {
-        id: "lulu-jazz-conte-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "lulu/jazz-conte/remix-3.mp3" }],
-      },
-      {
-        id: "lulu-jazz-conte-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "lulu/jazz-conte/remix-4.mp3" }],
-      },
     ],
   },
 
@@ -452,21 +302,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 1",
         songs: [{ title: "Remix 1", file: "lucas/ladys/remix-1.mp3" }],
       },
-      {
-        id: "lucas-ladys-coreo2",
-        name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "lucas/ladys/remix-2.mp3" }],
-      },
-      {
-        id: "lucas-ladys-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "lucas/ladys/remix-3.mp3" }],
-      },
-      {
-        id: "lucas-ladys-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "lucas/ladys/remix-4.mp3" }],
-      },
     ],
   },
   {
@@ -479,21 +314,6 @@ export const GROUPS: Group[] = [
         id: "lucas-latino-coreo1",
         name: "Coreo 1",
         songs: [{ title: "Remix 1", file: "lucas/latino/remix-1.mp3" }],
-      },
-      {
-        id: "lucas-latino-coreo2",
-        name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "lucas/latino/remix-2.mp3" }],
-      },
-      {
-        id: "lucas-latino-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "lucas/latino/remix-3.mp3" }],
-      },
-      {
-        id: "lucas-latino-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "lucas/latino/remix-4.mp3" }],
       },
     ],
   },
@@ -510,21 +330,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 1",
         songs: [{ title: "Remix 1", file: "marian/arabe-inicial/remix-1.mp3" }],
       },
-      {
-        id: "marian-arabe-inicial-coreo2",
-        name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "marian/arabe-inicial/remix-2.mp3" }],
-      },
-      {
-        id: "marian-arabe-inicial-coreo3",
-        name: "Coreo 3",
-        songs: [{ title: "Remix 3", file: "marian/arabe-inicial/remix-3.mp3" }],
-      },
-      {
-        id: "marian-arabe-inicial-coreo4",
-        name: "Coreo 4",
-        songs: [{ title: "Remix 4", file: "marian/arabe-inicial/remix-4.mp3" }],
-      },
     ],
   },
   {
@@ -538,27 +343,6 @@ export const GROUPS: Group[] = [
         name: "Coreo 1",
         songs: [
           { title: "Remix 1", file: "marian/arabe-intermedio/remix-1.mp3" },
-        ],
-      },
-      {
-        id: "marian-arabe-intermedio-coreo2",
-        name: "Coreo 2",
-        songs: [
-          { title: "Remix 2", file: "marian/arabe-intermedio/remix-2.mp3" },
-        ],
-      },
-      {
-        id: "marian-arabe-intermedio-coreo3",
-        name: "Coreo 3",
-        songs: [
-          { title: "Remix 3", file: "marian/arabe-intermedio/remix-3.mp3" },
-        ],
-      },
-      {
-        id: "marian-arabe-intermedio-coreo4",
-        name: "Coreo 4",
-        songs: [
-          { title: "Remix 4", file: "marian/arabe-intermedio/remix-4.mp3" },
         ],
       },
     ],

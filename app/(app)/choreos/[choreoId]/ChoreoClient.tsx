@@ -56,6 +56,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
+  const dragRatioRef = useRef(0);
 
   const currentSong = choreo.songs[currentSongIdx];
 
@@ -168,19 +169,38 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   }
 
   function handleDragStart(e: React.MouseEvent | React.TouchEvent) {
+    e.preventDefault();
     isDraggingRef.current = true;
     exitSectionMode();
+    const bar = progressRef.current;
+    if (!bar) return;
+
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    seekFromEvent(clientX);
+    const rect = bar.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    dragRatioRef.current = ratio;
+
+    // Update DOM directly during drag (no state updates)
+    const fill = bar.querySelector('div:first-child') as HTMLElement;
+    const thumb = bar.querySelector('div:last-child') as HTMLElement;
+    if (fill) fill.style.width = `${ratio * 100}%`;
+    if (thumb) thumb.style.left = `${ratio * 100}%`;
 
     function handleMove(ev: MouseEvent | TouchEvent) {
       if (!isDraggingRef.current) return;
       const cx = 'touches' in ev ? ev.touches[0].clientX : ev.clientX;
-      seekFromEvent(cx);
+      const r = Math.max(0, Math.min(1, (cx - rect.left) / rect.width));
+      dragRatioRef.current = r;
+      if (fill) fill.style.width = `${r * 100}%`;
+      if (thumb) thumb.style.left = `${r * 100}%`;
     }
 
     function handleEnd() {
       isDraggingRef.current = false;
+      const audio = audioRef.current;
+      if (audio && duration) {
+        audio.currentTime = dragRatioRef.current * duration;
+      }
       document.removeEventListener('mousemove', handleMove);
       document.removeEventListener('mouseup', handleEnd);
       document.removeEventListener('touchmove', handleMove);
