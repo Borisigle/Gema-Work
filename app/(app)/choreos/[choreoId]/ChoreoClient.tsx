@@ -55,6 +55,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   const audioRef = useRef<HTMLAudioElement>(null);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
 
   const currentSong = choreo.songs[currentSongIdx];
 
@@ -152,14 +153,44 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     }
   }
 
-  function seek(e: React.MouseEvent<HTMLDivElement>) {
+  function seekFromEvent(clientX: number) {
     const audio = audioRef.current;
     const bar = progressRef.current;
     if (!audio || !bar || !duration) return;
-    exitSectionMode();
     const rect = bar.getBoundingClientRect();
-    const ratio = (e.clientX - rect.left) / rect.width;
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     audio.currentTime = ratio * duration;
+  }
+
+  function seek(e: React.MouseEvent<HTMLDivElement>) {
+    exitSectionMode();
+    seekFromEvent(e.clientX);
+  }
+
+  function handleDragStart(e: React.MouseEvent | React.TouchEvent) {
+    isDraggingRef.current = true;
+    exitSectionMode();
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    seekFromEvent(clientX);
+
+    function handleMove(ev: MouseEvent | TouchEvent) {
+      if (!isDraggingRef.current) return;
+      const cx = 'touches' in ev ? ev.touches[0].clientX : ev.clientX;
+      seekFromEvent(cx);
+    }
+
+    function handleEnd() {
+      isDraggingRef.current = false;
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleMove);
+      document.removeEventListener('touchend', handleEnd);
+    }
+
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchmove', handleMove, { passive: true });
+    document.addEventListener('touchend', handleEnd);
   }
 
   function prevSong() {
@@ -480,6 +511,8 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
               ref={progressRef}
               className={styles.progressBar}
               onClick={seek}
+              onMouseDown={handleDragStart}
+              onTouchStart={handleDragStart}
               role="slider"
               aria-label="Progreso de reproducción"
             >

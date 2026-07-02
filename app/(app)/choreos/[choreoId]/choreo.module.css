@@ -221,7 +221,8 @@
   border: 1px solid var(--border);
   cursor: pointer;
   position: relative;
-  transition: var(--transition);
+  transition: height 0.15s ease;
+  touch-action: none;
 }
 
 .progressBar:hover {
@@ -231,20 +232,22 @@
 .progressFill {
   height: 100%;
   background: linear-gradient(90deg, var(--color, #c080ff), color-mix(in srgb, var(--color, #c080ff) 60%, #ff80c0));
-  transition: width 0.1s linear;
+  transition: width 0.05s linear;
+  pointer-events: none;
 }
 
 .progressThumb {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   background: #faf4f6;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  transition: left 0.1s linear;
+  transition: left 0.05s linear, opacity 0.15s ease;
   opacity: 0;
   border: 1px solid var(--border);
+  pointer-events: none;
 }
 
 .progressBar:hover .progressThumb {
