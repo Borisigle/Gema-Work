@@ -216,7 +216,7 @@ export const GROUPS: Group[] = [
       {
         id: "ani-reggaeton-femme-coreo1",
         name: "Coreo 1",
-        songs: [{ title: "Remix 1", file: "ani/reggaeton-femme/remix-1.mp3" }],
+        songs: [{ title: "Venom", file: "https://res.cloudinary.com/drdfbjkn/video/upload/v1783042005/VENOM_Reggaeton_Juvenil.mp3_ttlkjw.mp3" }],
       },
     ],
   },
@@ -229,7 +229,7 @@ export const GROUPS: Group[] = [
       {
         id: "ani-reggaeton-coreo1",
         name: "Coreo 1",
-        songs: [{ title: "Remix 1", file: "ani/reggaeton/remix-1.mp3" }],
+        songs: [{ title: "RPM", file: "https://res.cloudinary.com/drdfbjkn/video/upload/v1783042010/RPM_Reggaeton_adulto.mp3_pozki0.mp3" }],
       },
     ],
   },
