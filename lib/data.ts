@@ -165,7 +165,7 @@ export const GROUPS: Group[] = [
       {
         id: "cami-girly-team-coreo2",
         name: "Coreo 2",
-        songs: [{ title: "Remix 2", file: "cami/girly-team/remix-2.mp3" }],
+        songs: [{ title: "Girly 2", file: "https://res.cloudinary.com/drdfbjkn/video/upload/v1783375284/girly_2_wxhdp7.mp3" }],
       },
     ],
   },
