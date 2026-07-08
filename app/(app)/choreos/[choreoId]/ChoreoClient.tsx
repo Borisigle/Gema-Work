@@ -438,34 +438,42 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
       : `¿Ocultar el remix "${song.title}"? Ya no aparecerá en esta coreo.`;
     if (!confirm(msg)) return;
 
-    // Delete MP3 from Cloudinary
-    if (song.file.startsWith('http')) {
-      await fetch('/api/choreos/cloudinary-delete', {
-        method: 'POST',
+    try {
+      // Delete MP3 from Cloudinary
+      if (song.file.startsWith('http')) {
+        await fetch('/api/choreos/cloudinary-delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: song.file }),
+        });
+      }
+
+      const res = await fetch(`/api/choreos/${choreo.id}/songs`, {
+        method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: song.file }),
+        body: JSON.stringify(isCustom
+          ? { addedSongId: song.addedSongId }
+          : { songFile: song.file }
+        ),
       });
-    }
 
-    await fetch(`/api/choreos/${choreo.id}/songs`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(isCustom
-        ? { addedSongId: song.addedSongId }
-        : { songFile: song.file }
-      ),
-    });
+      if (!res.ok) {
+        console.error('Delete failed:', await res.text());
+        return;
+      }
 
-    // Update local state
-    setAvailableSongs(prev => {
-      const next = prev.filter((_, i) => {
-        if (isCustom) return prev[i].addedSongId !== song.addedSongId;
-        return prev[i].file !== song.file;
+      // Update local state
+      setAvailableSongs(prev => {
+        const next = isCustom
+          ? prev.filter(s => s.addedSongId !== song.addedSongId)
+          : prev.filter(s => s.file !== song.file);
+        return next.length > 0 ? next : [];
       });
-      return next.length > 0 ? next : choreo.songs.map(s => ({ title: s.title, file: s.file }));
-    });
-    if (currentSongIdx >= availableSongs.length - 1 && currentSongIdx > 0) {
-      setCurrentSongIdx(i => i - 1);
+      if (currentSongIdx > 0) {
+        setCurrentSongIdx(i => Math.min(i, Math.max(0, availableSongs.length - 2)));
+      }
+    } catch (err) {
+      console.error('Error deleting song:', err);
     }
   }
 
@@ -543,7 +551,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
           </div>
         )}
         <p className={styles.subtitle}>
-          {groupName} · {availableSongs.length} {availableSongs.length === 1 ? 'canción' : 'canciones'}
+          {groupName}
         </p>
       </div>
 
@@ -734,49 +742,53 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
           )}
 
           {/* Song list */}
-          {availableSongs.length > 0 && (
-            <div className={styles.songList}>
-              <h3 className={styles.songListTitle}>Canciones</h3>
-              {availableSongs.map((song, idx) => (
-                <div
-                  key={`${song.file}-${idx}`}
-                  className={`${styles.songItem} ${currentSongIdx === idx ? styles.songActive : ''}`}
-                >
-                  <button
-                    className={styles.songItemBtn}
-                    onClick={() => { setCurrentSongIdx(idx); setIsPlaying(false); }}
+          <div className={styles.songList}>
+            <h3 className={styles.songListTitle}>Remixes</h3>
+            {availableSongs.length === 0 ? (
+              <p className={styles.sinRemix}>Sin remix cargado</p>
+            ) : (
+              <>
+                {availableSongs.map((song, idx) => (
+                  <div
+                    key={`${song.file}-${idx}`}
+                    className={`${styles.songItem} ${currentSongIdx === idx ? styles.songActive : ''}`}
                   >
-                    <span className={styles.songItemNum}>{idx + 1}</span>
-                    <span className={styles.songItemName}>{song.title}</span>
-                    {currentSongIdx === idx && isPlaying && (
-                      <span className={styles.playingIndicator}>
-                        <span /><span /><span />
-                      </span>
-                    )}
-                  </button>
-                  <button
-                    className={styles.songDeleteBtn}
-                    onClick={() => handleDeleteSong(song)}
-                    title="Borrar remix"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="3 6 5 6 21 6"/>
-                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                      <path d="M10 11v6"/><path d="M14 11v6"/>
-                    </svg>
-                  </button>
+                    <button
+                      className={styles.songItemBtn}
+                      onClick={() => { setCurrentSongIdx(idx); setIsPlaying(false); }}
+                    >
+                      <span className={styles.songItemNum}>{idx + 1}</span>
+                      <span className={styles.songItemName}>{song.title}</span>
+                      {currentSongIdx === idx && isPlaying && (
+                        <span className={styles.playingIndicator}>
+                          <span /><span /><span />
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      className={styles.songDeleteBtn}
+                      onClick={() => handleDeleteSong(song)}
+                      title="Borrar remix"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6"/><path d="M14 11v6"/>
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+                <div className={styles.addSongRow}>
+                  <CloudinaryUpload
+                    accept="audio/*"
+                    onUpload={handleAddSong}
+                    label="+ Agregar remix"
+                    className="btn btn-secondary btn-sm"
+                  />
                 </div>
-              ))}
-              <div className={styles.addSongRow}>
-                <CloudinaryUpload
-                  accept="audio/*"
-                  onUpload={handleAddSong}
-                  label="+ Agregar remix"
-                  className="btn btn-secondary btn-sm"
-                />
-              </div>
-            </div>
-          )}
+              </>
+            )}
+          </div>
         </div>
       )}
 
