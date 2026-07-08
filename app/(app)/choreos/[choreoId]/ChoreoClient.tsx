@@ -96,7 +96,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
       });
   }, [choreo.id]);
 
-  const currentSong = availableSongs[currentSongIdx] || availableSongs[0];
+  const currentSong = availableSongs[currentSongIdx] || availableSongs[0] || choreo.songs[0];
 
   // Load notes on mount
   useEffect(() => {
