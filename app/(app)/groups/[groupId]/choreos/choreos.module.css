@@ -7,6 +7,15 @@
   margin-bottom: 24px;
 }
 
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .title {
   font-size: 200%;
   font-weight: 400;
@@ -134,7 +143,45 @@
   flex-shrink: 0;
 }
 
+.choreoCardLink {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+
+.deleteChoreoBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.choreoCard:hover .deleteChoreoBtn {
+  opacity: 1;
+}
+
+.deleteChoreoBtn:hover {
+  background: rgba(255, 80, 80, 0.15);
+  border-color: rgba(255, 80, 80, 0.4);
+  color: #e53e3e;
+}
+
 @media (max-width: 480px) {
   .choreoCard { flex-wrap: wrap; }
   .cardArrow { display: none; }
+  .deleteChoreoBtn { opacity: 1; }
 }

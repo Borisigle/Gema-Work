@@ -1,0 +1,174 @@
+.wrapper {
+  padding: 0;
+}
+
+.uploadRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.labelInput {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px 12px;
+  border: 2px solid var(--border);
+  background: white;
+  font-family: var(--font-retro);
+  font-size: 14px;
+}
+
+.labelInput:focus {
+  outline: none;
+  border-color: var(--color, var(--accent-1));
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-family: var(--font-retro);
+  font-size: 14px;
+}
+
+.grid {
+  columns: 3;
+  gap: 12px;
+}
+
+.item {
+  break-inside: avoid;
+  margin-bottom: 12px;
+  position: relative;
+  cursor: pointer;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.img {
+  width: 100%;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 10px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.item:hover .overlay {
+  opacity: 1;
+}
+
+.photoLabel {
+  color: white;
+  font-size: 12px;
+  font-family: var(--font-retro);
+}
+
+.deleteBtn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteBtn:hover {
+  background: rgba(255, 80, 80, 0.8);
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.lightboxContent {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.lightboxImg {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.lightboxLabel {
+  color: white;
+  text-align: center;
+  margin-top: 12px;
+  font-family: var(--font-retro);
+  font-size: 16px;
+}
+
+.lightboxDelete {
+  display: block;
+  margin: 12px auto 0;
+  padding: 6px 16px;
+  background: rgba(255, 80, 80, 0.2);
+  border: 1px solid rgba(255, 80, 80, 0.4);
+  color: #ff6b8a;
+  font-family: var(--font-retro);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.lightboxDelete:hover {
+  background: rgba(255, 80, 80, 0.4);
+}
+
+@media (max-width: 640px) {
+  .grid {
+    columns: 2;
+  }
+}

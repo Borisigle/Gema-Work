@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Choreo } from '@/lib/data';
+import VestuarioGallery from '@/components/VestuarioGallery';
 import styles from './choreo.module.css';
 
 interface Props {
@@ -14,7 +15,7 @@ interface Props {
 const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
 export default function ChoreoClient({ choreo, groupId, color, groupName }: Props) {
-  const [activeTab, setActiveTab] = useState<'player' | 'notes' | 'sections'>('player');
+  const [activeTab, setActiveTab] = useState<'player' | 'notes' | 'sections' | 'vestuario'>('player');
   const [currentSongIdx, setCurrentSongIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -494,6 +495,18 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
           </svg>
           Secciones{sectionsForCurrentSong.length > 0 ? ` (${sectionsForCurrentSong.length})` : ''}
         </button>
+        <button
+          id="tab-vestuario"
+          className={`${styles.tab} ${activeTab === 'vestuario' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('vestuario')}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          Vestuario
+        </button>
       </div>
 
       {/* Player tab */}
@@ -840,6 +853,13 @@ Ejemplo:
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Vestuario tab */}
+      {activeTab === 'vestuario' && (
+        <div className={`card ${styles.playerCard} animate-fade-in`}>
+          <VestuarioGallery choreoId={choreo.id} />
         </div>
       )}
     </div>

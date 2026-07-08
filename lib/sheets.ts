@@ -619,3 +619,170 @@ export async function getDatesWithAttendance(
   const dates = new Set(records.map((r) => r.date));
   return Array.from(dates);
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Custom Choreos (teacher-created during the year)
+// ─────────────────────────────────────────────────────────────────────────────
+export interface CustomChoreo {
+  id: string;
+  groupId: string;
+  teacherId: string;
+  name: string;
+  songs: { title: string; file: string }[];
+}
+
+export async function getCustomChoreosByGroup(groupId: string): Promise<CustomChoreo[]> {
+  if (isMockMode) {
+    const db = readMockDb();
+    return (db.choreos_custom || []).filter((c: any) => c.groupId === groupId);
+  }
+
+  const rows = await readSheet('choreos_custom!A:E');
+  if (!rows.length) return [];
+  return rows.slice(1).filter(r => r[1] === groupId).map(r => ({
+    id: r[0],
+    groupId: r[1],
+    teacherId: r[2],
+    name: r[3],
+    songs: JSON.parse(r[4] || '[]'),
+  }));
+}
+
+export async function addCustomChoreo(data: Omit<CustomChoreo, 'id'>): Promise<CustomChoreo> {
+  const id = `custom-${Date.now()}`;
+  const choreo: CustomChoreo = { ...data, id };
+
+  if (isMockMode) {
+    const db = readMockDb();
+    if (!db.choreos_custom) db.choreos_custom = [];
+    db.choreos_custom.push(choreo);
+    writeMockDb(db);
+    return choreo;
+  }
+
+  const rows = await readSheet('choreos_custom!A:E');
+  const allRows = rows.length ? rows : [['id', 'groupId', 'teacherId', 'name', 'songs']];
+  allRows.push([id, data.groupId, data.teacherId, data.name, JSON.stringify(data.songs)]);
+  await writeRow(`choreos_custom!A1:E${allRows.length}`, allRows);
+
+  return choreo;
+}
+
+export async function deleteCustomChoreo(id: string): Promise<void> {
+  if (isMockMode) {
+    const db = readMockDb();
+    db.choreos_custom = (db.choreos_custom || []).filter((c: any) => c.id !== id);
+    writeMockDb(db);
+    return;
+  }
+
+  const rows = await readSheet('choreos_custom!A:E');
+  if (!rows.length) return;
+  const filtered = rows.filter((r, i) => i === 0 || r[0] !== id);
+  await writeRow(`choreos_custom!A1:E${filtered.length}`, filtered);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Vestuario (costume photos)
+// ─────────────────────────────────────────────────────────────────────────────
+export interface VestuarioPhoto {
+  id: string;
+  choreoId: string;
+  url: string;
+  label: string;
+  createdAt: string;
+}
+
+export async function getVestuarioByChoreo(choreoId: string): Promise<VestuarioPhoto[]> {
+  if (isMockMode) {
+    const db = readMockDb();
+    return (db.vestuario || []).filter((v: any) => v.choreoId === choreoId);
+  }
+
+  const rows = await readSheet('vestuario!A:E');
+  if (!rows.length) return [];
+  return rows.slice(1).filter(r => r[1] === choreoId).map(r => ({
+    id: r[0],
+    choreoId: r[1],
+    url: r[2],
+    label: r[3],
+    createdAt: r[4],
+  }));
+}
+
+export async function addVestuarioPhoto(data: Omit<VestuarioPhoto, 'id' | 'createdAt'>): Promise<VestuarioPhoto> {
+  const id = `vest-${Date.now()}`;
+  const photo: VestuarioPhoto = { ...data, id, createdAt: new Date().toISOString().slice(0, 10) };
+
+  if (isMockMode) {
+    const db = readMockDb();
+    if (!db.vestuario) db.vestuario = [];
+    db.vestuario.push(photo);
+    writeMockDb(db);
+    return photo;
+  }
+
+  const rows = await readSheet('vestuario!A:E');
+  const allRows = rows.length ? rows : [['id', 'choreoId', 'url', 'label', 'createdAt']];
+  allRows.push([id, data.choreoId, data.url, data.label, photo.createdAt]);
+  await writeRow(`vestuario!A1:E${allRows.length}`, allRows);
+
+  return photo;
+}
+
+export async function deleteVestuarioPhoto(id: string): Promise<void> {
+  if (isMockMode) {
+    const db = readMockDb();
+    db.vestuario = (db.vestuario || []).filter((v: any) => v.id !== id);
+    writeMockDb(db);
+    return;
+  }
+
+  const rows = await readSheet('vestuario!A:E');
+  if (!rows.length) return;
+  const filtered = rows.filter((r, i) => i === 0 || r[0] !== id);
+  await writeRow(`vestuario!A1:E${filtered.length}`, filtered);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Hidden Choreos (hide hardcoded choreos without deleting from code)
+// ─────────────────────────────────────────────────────────────────────────────
+export async function getHiddenChoreos(): Promise<string[]> {
+  if (isMockMode) {
+    const db = readMockDb();
+    return (db.hidden_choreos || []).map((h: any) => h.choreoId);
+  }
+
+  const rows = await readSheet('hidden_choreos!A:B');
+  if (!rows.length) return [];
+  return rows.slice(1).map(r => r[1]);
+}
+
+export async function hideChoreo(choreoId: string): Promise<void> {
+  if (isMockMode) {
+    const db = readMockDb();
+    if (!db.hidden_choreos) db.hidden_choreos = [];
+    db.hidden_choreos.push({ id: `hide-${Date.now()}`, choreoId });
+    writeMockDb(db);
+    return;
+  }
+
+  const rows = await readSheet('hidden_choreos!A:B');
+  const allRows = rows.length ? rows : [['id', 'choreoId']];
+  allRows.push([`hide-${Date.now()}`, choreoId]);
+  await writeRow(`hidden_choreos!A1:B${allRows.length}`, allRows);
+}
+
+export async function unhideChoreo(choreoId: string): Promise<void> {
+  if (isMockMode) {
+    const db = readMockDb();
+    db.hidden_choreos = (db.hidden_choreos || []).filter((h: any) => h.choreoId !== choreoId);
+    writeMockDb(db);
+    return;
+  }
+
+  const rows = await readSheet('hidden_choreos!A:B');
+  if (!rows.length) return;
+  const filtered = rows.filter((r, i) => i === 0 || r[1] !== choreoId);
+  await writeRow(`hidden_choreos!A1:B${filtered.length}`, filtered);
+}
