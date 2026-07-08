@@ -426,20 +426,59 @@
 .songItem {
   display: flex;
   align-items: center;
+  gap: 4px;
+  border: 1px solid transparent;
+  margin-bottom: 3px;
+}
+
+.songItemBtn {
+  display: flex;
+  align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border: 1px solid transparent;
-  width: 100%;
+  flex: 1;
   text-align: left;
   background: transparent;
   cursor: pointer;
   transition: var(--transition);
-  margin-bottom: 3px;
+  border: none;
+  min-width: 0;
 }
 
-.songItem:hover {
+.songItemBtn:hover {
   background: rgba(255, 255, 255, 0.6);
   border-color: var(--border);
+}
+
+.songDeleteBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.songItem:hover .songDeleteBtn {
+  opacity: 1;
+}
+
+.songDeleteBtn:hover {
+  background: rgba(255, 80, 80, 0.15);
+  border-color: rgba(255, 80, 80, 0.4);
+  color: #e53e3e;
+}
+
+.addSongRow {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
 }
 
 .songActive {

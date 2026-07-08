@@ -786,3 +786,91 @@ export async function unhideChoreo(choreoId: string): Promise<void> {
   const filtered = rows.filter((r, i) => i === 0 || r[1] !== choreoId);
   await writeRow(`hidden_choreos!A1:B${filtered.length}`, filtered);
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Deleted Songs (hide individual songs from hardcoded choreos)
+// ─────────────────────────────────────────────────────────────────────────────
+export async function getDeletedSongs(): Promise<{ choreoId: string; songFile: string }[]> {
+  if (isMockMode) {
+    const db = readMockDb();
+    return (db.deleted_songs || []).map((s: any) => ({ choreoId: s.choreoId, songFile: s.songFile }));
+  }
+
+  const rows = await readSheet('deleted_songs!A:D');
+  if (!rows.length) return [];
+  return rows.slice(1).map(r => ({ choreoId: r[1], songFile: r[2] }));
+}
+
+export async function deleteSong(choreoId: string, songFile: string): Promise<void> {
+  const id = `del-${Date.now()}`;
+
+  if (isMockMode) {
+    const db = readMockDb();
+    if (!db.deleted_songs) db.deleted_songs = [];
+    db.deleted_songs.push({ id, choreoId, songFile });
+    writeMockDb(db);
+    return;
+  }
+
+  const rows = await readSheet('deleted_songs!A:D');
+  const allRows = rows.length ? rows : [['id', 'choreoId', 'songTitle', 'songFile']];
+  allRows.push([id, choreoId, '', songFile]);
+  await writeRow(`deleted_songs!A1:D${allRows.length}`, allRows);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Added Songs (upload new songs to existing choreos)
+// ─────────────────────────────────────────────────────────────────────────────
+export interface AddedSong {
+  id: string;
+  choreoId: string;
+  title: string;
+  file: string;
+}
+
+export async function getAddedSongsByChoreo(choreoId: string): Promise<AddedSong[]> {
+  if (isMockMode) {
+    const db = readMockDb();
+    return (db.added_songs || []).filter((s: any) => s.choreoId === choreoId);
+  }
+
+  const rows = await readSheet('added_songs!A:D');
+  if (!rows.length) return [];
+  return rows.slice(1)
+    .filter(r => r[1] === choreoId)
+    .map(r => ({ id: r[0], choreoId: r[1], title: r[2], file: r[3] }));
+}
+
+export async function addSong(data: { choreoId: string; title: string; file: string }): Promise<AddedSong> {
+  const id = `song-${Date.now()}`;
+  const song: AddedSong = { id, ...data };
+
+  if (isMockMode) {
+    const db = readMockDb();
+    if (!db.added_songs) db.added_songs = [];
+    db.added_songs.push(song);
+    writeMockDb(db);
+    return song;
+  }
+
+  const rows = await readSheet('added_songs!A:D');
+  const allRows = rows.length ? rows : [['id', 'choreoId', 'title', 'file']];
+  allRows.push([id, data.choreoId, data.title, data.file]);
+  await writeRow(`added_songs!A1:D${allRows.length}`, allRows);
+
+  return song;
+}
+
+export async function removeAddedSong(id: string): Promise<void> {
+  if (isMockMode) {
+    const db = readMockDb();
+    db.added_songs = (db.added_songs || []).filter((s: any) => s.id !== id);
+    writeMockDb(db);
+    return;
+  }
+
+  const rows = await readSheet('added_songs!A:D');
+  if (!rows.length) return;
+  const filtered = rows.filter((r, i) => i === 0 || r[0] !== id);
+  await writeRow(`added_songs!A1:D${filtered.length}`, filtered);
+}

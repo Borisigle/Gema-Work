@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Choreo } from '@/lib/data';
 import VestuarioGallery from '@/components/VestuarioGallery';
+import CloudinaryUpload from '@/components/CloudinaryUpload';
 import styles from './choreo.module.css';
 
 interface Props {
@@ -10,6 +11,12 @@ interface Props {
   groupId: string;
   color: string;
   groupName: string;
+}
+
+interface AvailableSong {
+  title: string;
+  file: string;
+  addedSongId?: string;
 }
 
 const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 2];
@@ -25,6 +32,10 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   const [notes, setNotes] = useState('');
   const [notesStatus, setNotesStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [audioError, setAudioError] = useState(false);
+
+  // Available songs (hardcoded minus deleted + added)
+  const [availableSongs, setAvailableSongs] = useState<AvailableSong[]>([]);
+  const [songsLoaded, setSongsLoaded] = useState(false);
 
   // Nombre editable de la coreografía
   const [choreoName, setChoreoName] = useState(choreo.name);
@@ -59,7 +70,33 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   const isDraggingRef = useRef(false);
   const dragRatioRef = useRef(0);
 
-  const currentSong = choreo.songs[currentSongIdx];
+  // Fetch available songs on mount
+  useEffect(() => {
+    fetch(`/api/choreos/${choreo.id}/songs`)
+      .then(r => r.json())
+      .then(data => {
+        const deletedFiles: string[] = data.deletedFiles || [];
+        const added = (data.added || []).map((s: any) => ({
+          title: s.title,
+          file: s.file,
+          addedSongId: s.id,
+        }));
+
+        const hardcoded = choreo.songs
+          .filter(s => !deletedFiles.includes(s.file))
+          .map(s => ({ title: s.title, file: s.file }));
+
+        const all = [...hardcoded, ...added];
+        setAvailableSongs(all.length > 0 ? all : choreo.songs.map(s => ({ title: s.title, file: s.file })));
+        setSongsLoaded(true);
+      })
+      .catch(() => {
+        setAvailableSongs(choreo.songs.map(s => ({ title: s.title, file: s.file })));
+        setSongsLoaded(true);
+      });
+  }, [choreo.id]);
+
+  const currentSong = availableSongs[currentSongIdx] || availableSongs[0];
 
   // Load notes on mount
   useEffect(() => {
@@ -95,7 +132,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     };
     const onDurationChange = () => setDuration(audio.duration);
     const onEnded = () => {
-      if (currentSongIdx < choreo.songs.length - 1) {
+      if (currentSongIdx < availableSongs.length - 1) {
         setCurrentSongIdx(i => i + 1);
       } else {
         setIsPlaying(false);
@@ -118,7 +155,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
       audio.removeEventListener('error', onError);
       audio.removeEventListener('canplay', onCanPlay);
     };
-  }, [currentSongIdx, choreo.songs.length]);
+  }, [currentSongIdx, availableSongs.length]);
 
   // Handle song change
   useEffect(() => {
@@ -219,7 +256,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   }
 
   function nextSong() {
-    if (currentSongIdx < choreo.songs.length - 1) setCurrentSongIdx(i => i + 1);
+    if (currentSongIdx < availableSongs.length - 1) setCurrentSongIdx(i => i + 1);
   }
 
   function formatTime(s: number) {
@@ -394,6 +431,65 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     }
   }
 
+  async function handleDeleteSong(song: AvailableSong) {
+    const isCustom = !!song.addedSongId;
+    const msg = isCustom
+      ? `¿Borrar el remix "${song.title}"?`
+      : `¿Ocultar el remix "${song.title}"? Ya no aparecerá en esta coreo.`;
+    if (!confirm(msg)) return;
+
+    // Delete MP3 from Cloudinary
+    if (song.file.startsWith('http')) {
+      await fetch('/api/choreos/cloudinary-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: song.file }),
+      });
+    }
+
+    await fetch(`/api/choreos/${choreo.id}/songs`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(isCustom
+        ? { addedSongId: song.addedSongId }
+        : { songFile: song.file }
+      ),
+    });
+
+    // Update local state
+    setAvailableSongs(prev => {
+      const next = prev.filter((_, i) => {
+        if (isCustom) return prev[i].addedSongId !== song.addedSongId;
+        return prev[i].file !== song.file;
+      });
+      return next.length > 0 ? next : choreo.songs.map(s => ({ title: s.title, file: s.file }));
+    });
+    if (currentSongIdx >= availableSongs.length - 1 && currentSongIdx > 0) {
+      setCurrentSongIdx(i => i - 1);
+    }
+  }
+
+  function handleAddSong(url: string) {
+    const title = prompt('Nombre del remix:');
+    if (!title?.trim()) return;
+
+    fetch(`/api/choreos/${choreo.id}/songs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: title.trim(), file: url }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.song) {
+          setAvailableSongs(prev => [...prev, {
+            title: data.song.title,
+            file: data.song.file,
+            addedSongId: data.song.id,
+          }]);
+        }
+      });
+  }
+
   function handleNameKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') saveName();
     if (e.key === 'Escape') cancelEditingName();
@@ -447,7 +543,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
           </div>
         )}
         <p className={styles.subtitle}>
-          {groupName} · {choreo.songs.length} {choreo.songs.length === 1 ? 'canción' : 'canciones'}
+          {groupName} · {availableSongs.length} {availableSongs.length === 1 ? 'canción' : 'canciones'}
         </p>
       </div>
 
@@ -585,7 +681,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
                   </svg>
                 )}
               </button>
-              <button className="btn btn-ghost btn-sm" onClick={nextSong} disabled={currentSongIdx === choreo.songs.length - 1} title="Siguiente">
+              <button className="btn btn-ghost btn-sm" onClick={nextSong} disabled={currentSongIdx === availableSongs.length - 1} title="Siguiente">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" strokeWidth="2" stroke="currentColor" fill="none"/>
                 </svg>
@@ -638,24 +734,47 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
           )}
 
           {/* Song list */}
-          {choreo.songs.length > 1 && (
+          {availableSongs.length > 0 && (
             <div className={styles.songList}>
               <h3 className={styles.songListTitle}>Canciones</h3>
-              {choreo.songs.map((song, idx) => (
-                <button
-                  key={idx}
+              {availableSongs.map((song, idx) => (
+                <div
+                  key={`${song.file}-${idx}`}
                   className={`${styles.songItem} ${currentSongIdx === idx ? styles.songActive : ''}`}
-                  onClick={() => { setCurrentSongIdx(idx); setIsPlaying(false); }}
                 >
-                  <span className={styles.songItemNum}>{idx + 1}</span>
-                  <span className={styles.songItemName}>{song.title}</span>
-                  {currentSongIdx === idx && isPlaying && (
-                    <span className={styles.playingIndicator}>
-                      <span /><span /><span />
-                    </span>
-                  )}
-                </button>
+                  <button
+                    className={styles.songItemBtn}
+                    onClick={() => { setCurrentSongIdx(idx); setIsPlaying(false); }}
+                  >
+                    <span className={styles.songItemNum}>{idx + 1}</span>
+                    <span className={styles.songItemName}>{song.title}</span>
+                    {currentSongIdx === idx && isPlaying && (
+                      <span className={styles.playingIndicator}>
+                        <span /><span /><span />
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    className={styles.songDeleteBtn}
+                    onClick={() => handleDeleteSong(song)}
+                    title="Borrar remix"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                      <path d="M10 11v6"/><path d="M14 11v6"/>
+                    </svg>
+                  </button>
+                </div>
               ))}
+              <div className={styles.addSongRow}>
+                <CloudinaryUpload
+                  accept="audio/*"
+                  onUpload={handleAddSong}
+                  label="+ Agregar remix"
+                  className="btn btn-secondary btn-sm"
+                />
+              </div>
             </div>
           )}
         </div>
