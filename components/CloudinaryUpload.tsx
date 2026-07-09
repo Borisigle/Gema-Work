@@ -45,22 +45,30 @@ export default function CloudinaryUpload({ accept, onUpload, onError, label, cla
         };
 
         xhr.onload = () => {
+          console.log('[Cloudinary] Response:', xhr.status, xhr.responseText);
           if (xhr.status === 200) {
             const data = JSON.parse(xhr.responseText);
             resolve(data.secure_url);
           } else {
-            reject(new Error('Error al subir'));
+            const data = JSON.parse(xhr.responseText);
+            console.error('[Cloudinary] Error:', data);
+            reject(new Error(data.error?.message || `HTTP ${xhr.status}`));
           }
         };
 
-        xhr.onerror = () => reject(new Error('Error de red'));
+        xhr.onerror = () => {
+          console.error('[Cloudinary] Network error');
+          reject(new Error('Error de red'));
+        };
         xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/upload`);
         xhr.send(formData);
       });
 
+      console.log('[Cloudinary] Upload OK:', url);
       onUpload(url, file.name);
-    } catch {
-      onError?.('No se pudo subir el archivo. Intentá de nuevo.');
+    } catch (err: any) {
+      console.error('[Cloudinary] Upload failed:', err);
+      onError?.(`Error: ${err.message}`);
     } finally {
       setUploading(false);
       setProgress(0);

@@ -23,11 +23,18 @@ export async function POST(
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
 
-  const { title, file } = await req.json();
-  if (!title || !file) return NextResponse.json({ error: 'Faltan title o file' }, { status: 400 });
+  try {
+    const { title, file } = await req.json();
+    console.log('[Songs] POST', { choreoId: params.choreoId, title, file });
+    if (!title || !file) return NextResponse.json({ error: 'Faltan title o file' }, { status: 400 });
 
-  const song = await addSong({ choreoId: params.choreoId, title, file });
-  return NextResponse.json({ success: true, song });
+    const song = await addSong({ choreoId: params.choreoId, title, file });
+    console.log('[Songs] Saved:', song);
+    return NextResponse.json({ success: true, song });
+  } catch (err: any) {
+    console.error('[Songs] POST error:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
 }
 
 export async function DELETE(
@@ -37,19 +44,23 @@ export async function DELETE(
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
 
-  const { songFile, addedSongId } = await req.json();
+  try {
+    const { songFile, addedSongId } = await req.json();
+    console.log('[Songs] DELETE', { choreoId: params.choreoId, songFile, addedSongId });
 
-  if (addedSongId) {
-    // Remove an added (custom) song
-    await removeAddedSong(addedSongId);
-    return NextResponse.json({ success: true });
+    if (addedSongId) {
+      await removeAddedSong(addedSongId);
+      return NextResponse.json({ success: true });
+    }
+
+    if (songFile) {
+      await deleteSong(params.choreoId, songFile);
+      return NextResponse.json({ success: true });
+    }
+
+    return NextResponse.json({ error: 'Falta songFile o addedSongId' }, { status: 400 });
+  } catch (err: any) {
+    console.error('[Songs] DELETE error:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
-
-  if (songFile) {
-    // Hide a hardcoded song
-    await deleteSong(params.choreoId, songFile);
-    return NextResponse.json({ success: true });
-  }
-
-  return NextResponse.json({ error: 'Falta songFile o addedSongId' }, { status: 400 });
 }

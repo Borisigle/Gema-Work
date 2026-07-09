@@ -21,18 +21,25 @@ export async function POST(
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
 
-  const { url, label } = await req.json();
+  try {
+    const { url, label } = await req.json();
+    console.log('[Vestuario] POST', { choreoId: params.choreoId, url, label });
 
-  if (!url) {
-    return NextResponse.json({ error: 'Falta url' }, { status: 400 });
+    if (!url) {
+      return NextResponse.json({ error: 'Falta url' }, { status: 400 });
+    }
+
+    const photo = await addVestuarioPhoto({
+      choreoId: params.choreoId,
+      url,
+      label: label || '',
+    });
+    console.log('[Vestuario] Saved:', photo);
+    return NextResponse.json({ success: true, photo });
+  } catch (err: any) {
+    console.error('[Vestuario] POST error:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
-
-  const photo = await addVestuarioPhoto({
-    choreoId: params.choreoId,
-    url,
-    label: label || '',
-  });
-  return NextResponse.json({ success: true, photo });
 }
 
 export async function DELETE(

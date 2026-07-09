@@ -17,14 +17,21 @@ export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
 
-  const { groupId, teacherId, name, songs } = await req.json();
+  try {
+    const { groupId, teacherId, name, songs } = await req.json();
+    console.log('[CustomChoreo] POST', { groupId, teacherId, name, songsCount: songs?.length });
 
-  if (!groupId || !teacherId || !name || !songs?.length) {
-    return NextResponse.json({ error: 'Datos inválidos' }, { status: 400 });
+    if (!groupId || !teacherId || !name || !songs?.length) {
+      return NextResponse.json({ error: 'Datos inválidos' }, { status: 400 });
+    }
+
+    const choreo = await addCustomChoreo({ groupId, teacherId, name, songs });
+    console.log('[CustomChoreo] Saved:', choreo);
+    return NextResponse.json({ success: true, choreo });
+  } catch (err: any) {
+    console.error('[CustomChoreo] POST error:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
-
-  const choreo = await addCustomChoreo({ groupId, teacherId, name, songs });
-  return NextResponse.json({ success: true, choreo });
 }
 
 export async function DELETE(req: NextRequest) {

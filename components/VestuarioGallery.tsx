@@ -33,6 +33,7 @@ export default function VestuarioGallery({ choreoId }: Props) {
   }, [choreoId]);
 
   function handleUpload(url: string) {
+    console.log('[Vestuario] Uploading photo:', url);
     fetch(`/api/choreos/${choreoId}/vestuario`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,11 +41,15 @@ export default function VestuarioGallery({ choreoId }: Props) {
     })
       .then(r => r.json())
       .then(data => {
+        console.log('[Vestuario] API response:', data);
         if (data.photo) {
           setPhotos(prev => [...prev, data.photo]);
           setLabel('');
+        } else {
+          console.error('[Vestuario] No photo in response:', data);
         }
-      });
+      })
+      .catch(err => console.error('[Vestuario] API error:', err));
   }
 
   async function handleDelete(id: string) {

@@ -455,6 +455,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     const title = prompt('Nombre del remix:');
     if (!title?.trim()) return;
 
+    console.log('[Song] Adding:', { title, url });
     fetch(`/api/choreos/${choreo.id}/songs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -462,10 +463,14 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     })
       .then(r => r.json())
       .then(data => {
+        console.log('[Song] API response:', data);
         if (data.song) {
           setCurrentSong({ title: data.song.title, file: data.song.file, addedSongId: data.song.id });
+        } else {
+          console.error('[Song] No song in response:', data);
         }
-      });
+      })
+      .catch(err => console.error('[Song] API error:', err));
   }
 
   function handleNameKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
