@@ -823,6 +823,29 @@
   font-family: var(--font-retro);
 }
 
+.songNameInput {
+  flex: 1;
+  min-width: 160px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: #faf4f6;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-retro);
+}
+
+.songNameInput:focus {
+  outline: none;
+  border-color: var(--color);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color) 10%, transparent);
+}
+
+.nameSavedMsg {
+  font-size: 14px;
+  color: var(--success);
+  font-family: var(--font-retro);
+}
+
 @media (max-width: 640px) {
   .sectionsCardHeader { flex-direction: column; }
   .addSectionForm { flex-direction: column; align-items: stretch; }

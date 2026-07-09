@@ -2,7 +2,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getSession } from '@/lib/auth';
 import { getGroupById, getTeacherById } from '@/lib/data';
-import { getAllChoreoNameOverrides } from '@/lib/sheets';
+import { getAllChoreoNameOverrides, getHiddenChoreos } from '@/lib/sheets';
 import styles from './choreos.module.css';
 import ChoreosListClient from './ChoreosListClient';
 
@@ -20,8 +20,10 @@ export default async function ChoreosPage({ params }: Props) {
   const teacher = session.isAdmin ? getTeacherById(group.teacherId) : getTeacherById(session.teacherId);
   const color = teacher?.color || '#8b5cf6';
 
-  // Los nombres pueden haber sido editados por el profe; los overrides pisan al default hardcodeado
-  const nameOverrides = await getAllChoreoNameOverrides();
+  const [nameOverrides, hiddenChoreos] = await Promise.all([
+    getAllChoreoNameOverrides(),
+    getHiddenChoreos(),
+  ]);
 
   return (
     <div className={`container ${styles.page}`}>
@@ -51,11 +53,13 @@ export default async function ChoreosPage({ params }: Props) {
         groupId={params.groupId}
         teacherId={group.teacherId}
         color={color}
-        hardcodedChoreos={group.choreos.map(c => ({
-          id: c.id,
-          name: c.name,
-          songs: c.songs.map(s => ({ title: s.title, file: s.file })),
-        }))}
+        hardcodedChoreos={group.choreos
+          .filter(c => !hiddenChoreos.includes(c.id))
+          .map(c => ({
+            id: c.id,
+            name: c.name,
+            songs: c.songs.map(s => ({ title: s.title, file: s.file })),
+          }))}
         nameOverrides={nameOverrides}
       />
     </div>

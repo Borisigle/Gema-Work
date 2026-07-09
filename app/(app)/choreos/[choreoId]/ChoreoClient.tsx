@@ -11,11 +11,12 @@ interface Props {
   groupId: string;
   color: string;
   groupName: string;
+  initialSong: { title: string; file: string; addedSongId?: string } | null;
 }
 
 const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-export default function ChoreoClient({ choreo, groupId, color, groupName }: Props) {
+export default function ChoreoClient({ choreo, groupId, color, groupName, initialSong }: Props) {
   const [activeTab, setActiveTab] = useState<'player' | 'notes' | 'sections' | 'vestuario'>('player');
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -26,9 +27,13 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   const [notesStatus, setNotesStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [audioError, setAudioError] = useState(false);
 
-  // Current song (single remix per choreo)
-  const [currentSong, setCurrentSong] = useState<{ title: string; file: string; addedSongId?: string } | null>(null);
-  const [songsLoaded, setSongsLoaded] = useState(false);
+  // Current song — initialized from server, no client fetch needed
+  const [currentSong, setCurrentSong] = useState(initialSong);
+
+  // Remix name editing (inline, no prompt)
+  const [isEditingSongName, setIsEditingSongName] = useState(false);
+  const [songNameInput, setSongNameInput] = useState('');
+  const [songNameStatus, setSongNameStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   // Nombre editable de la coreografía
   const [choreoName, setChoreoName] = useState(choreo.name);
@@ -62,34 +67,6 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   const progressRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
   const dragRatioRef = useRef(0);
-
-  // Fetch current song on mount
-  useEffect(() => {
-    fetch(`/api/choreos/${choreo.id}/songs`)
-      .then(r => r.json())
-      .then(data => {
-        const deletedFiles: string[] = data.deletedFiles || [];
-        const added = data.added || [];
-
-        // Check if a hardcoded song is available
-        const hardcoded = choreo.songs.find(s => !deletedFiles.includes(s.file));
-        // Check if there's an added song
-        const addedSong = added.length > 0 ? added[added.length - 1] : null;
-
-        if (addedSong) {
-          setCurrentSong({ title: addedSong.title, file: addedSong.file, addedSongId: addedSong.id });
-        } else if (hardcoded) {
-          setCurrentSong({ title: hardcoded.title, file: hardcoded.file });
-        } else {
-          setCurrentSong(null);
-        }
-        setSongsLoaded(true);
-      })
-      .catch(() => {
-        setCurrentSong(choreo.songs[0] ? { title: choreo.songs[0].title, file: choreo.songs[0].file } : null);
-        setSongsLoaded(true);
-      });
-  }, [choreo.id]);
 
   const songFile = currentSong?.file || choreo.songs[0]?.file || '';
 
@@ -451,26 +428,53 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     }
   }
 
-  function handleAddSong(url: string) {
-    const title = prompt('Nombre del remix:');
-    if (!title?.trim()) return;
+  // Pending upload URL (waiting for name)
+  const [pendingUploadUrl, setPendingUploadUrl] = useState<string | null>(null);
 
-    console.log('[Song] Adding:', { title, url });
-    fetch(`/api/choreos/${choreo.id}/songs`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: title.trim(), file: url }),
-    })
-      .then(r => r.json())
-      .then(data => {
-        console.log('[Song] API response:', data);
-        if (data.song) {
-          setCurrentSong({ title: data.song.title, file: data.song.file, addedSongId: data.song.id });
-        } else {
-          console.error('[Song] No song in response:', data);
-        }
-      })
-      .catch(err => console.error('[Song] API error:', err));
+  function handleAddSong(url: string) {
+    // Show inline name editor instead of prompt()
+    setPendingUploadUrl(url);
+    setSongNameInput('');
+    setIsEditingSongName(true);
+    setSongNameStatus('idle');
+  }
+
+  async function saveSongName() {
+    const title = songNameInput.trim();
+    if (!title || !pendingUploadUrl) return;
+
+    setSongNameStatus('saving');
+    try {
+      const res = await fetch(`/api/choreos/${choreo.id}/songs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, file: pendingUploadUrl }),
+      });
+      const data = await res.json();
+      if (data.song) {
+        setCurrentSong({ title: data.song.title, file: data.song.file, addedSongId: data.song.id });
+        setSongNameStatus('saved');
+        setTimeout(() => {
+          setIsEditingSongName(false);
+          setPendingUploadUrl(null);
+          setSongNameStatus('idle');
+        }, 1000);
+      }
+    } catch (err) {
+      console.error('[Song] Save error:', err);
+      setSongNameStatus('idle');
+    }
+  }
+
+  function cancelSongName() {
+    setIsEditingSongName(false);
+    setPendingUploadUrl(null);
+    setSongNameStatus('idle');
+  }
+
+  function handleSongNameKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Enter') saveSongName();
+    if (e.key === 'Escape') cancelSongName();
   }
 
   function handleNameKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -715,25 +719,60 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
               )}
 
               {/* Replace remix button */}
-              <div className={styles.addSongRow}>
-                <CloudinaryUpload
-                  accept="audio/*"
-                  onUpload={handleAddSong}
-                  label="Reemplazar remix"
-                  className="btn btn-secondary btn-sm"
-                />
-              </div>
+              {!isEditingSongName && (
+                <div className={styles.addSongRow}>
+                  <CloudinaryUpload
+                    accept="audio/*"
+                    onUpload={handleAddSong}
+                    label="Reemplazar remix"
+                    className="btn btn-secondary btn-sm"
+                  />
+                </div>
+              )}
             </>
           ) : (
             /* No song state */
             <div className={styles.sinRemix}>
-              <p>Sin remix cargado</p>
-              <CloudinaryUpload
-                accept="audio/*"
-                onUpload={handleAddSong}
-                label="+ Agregar remix"
-                className="btn btn-secondary btn-sm"
+              {!isEditingSongName ? (
+                <>
+                  <p>Sin remix cargado</p>
+                  <CloudinaryUpload
+                    accept="audio/*"
+                    onUpload={handleAddSong}
+                    label="+ Agregar remix"
+                    className="btn btn-secondary btn-sm"
+                  />
+                </>
+              ) : (
+                <p>Subiendo archivo...</p>
+              )}
+            </div>
+          )}
+
+          {/* Inline song name editor */}
+          {isEditingSongName && (
+            <div className={styles.addSongRow}>
+              <input
+                id="song-name-input"
+                className={styles.songNameInput}
+                value={songNameInput}
+                onChange={e => setSongNameInput(e.target.value)}
+                onKeyDown={handleSongNameKeyDown}
+                placeholder="Nombre del remix"
+                autoFocus
+                maxLength={60}
               />
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={saveSongName}
+                disabled={songNameStatus === 'saving' || !songNameInput.trim()}
+              >
+                {songNameStatus === 'saving' ? '...' : 'Guardar'}
+              </button>
+              <button className="btn btn-ghost btn-sm" onClick={cancelSongName}>
+                Cancelar
+              </button>
+              {songNameStatus === 'saved' && <span className={styles.nameSavedMsg}>✓</span>}
             </div>
           )}
         </div>

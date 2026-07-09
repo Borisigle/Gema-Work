@@ -29,9 +29,9 @@ interface Props {
 
 export default function ChoreosListClient({ groupId, teacherId, color, hardcodedChoreos, nameOverrides }: Props) {
   const [customChoreos, setCustomChoreos] = useState<CustomChoreo[]>([]);
-  const [hiddenIds, setHiddenIds] = useState<string[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [locallyHidden, setLocallyHidden] = useState<string[]>([]);
 
   function fetchCustom() {
     fetch(`/api/choreos/custom?groupId=${groupId}`)
@@ -43,19 +43,11 @@ export default function ChoreosListClient({ groupId, teacherId, color, hardcoded
       .catch(() => setLoading(false));
   }
 
-  function fetchHidden() {
-    fetch('/api/choreos/hide')
-      .then(r => r.json())
-      .then(data => setHiddenIds(data.hidden || []))
-      .catch(() => {});
-  }
-
   useEffect(() => {
     fetchCustom();
-    fetchHidden();
   }, [groupId]);
 
-  const visibleHardcoded = hardcodedChoreos.filter(c => !hiddenIds.includes(c.id));
+  const visibleHardcoded = hardcodedChoreos.filter(c => !locallyHidden.includes(c.id));
   const total = visibleHardcoded.length + customChoreos.length;
 
   async function handleDelete(id: string, name: string, songs: { file: string }[], isCustom: boolean) {
@@ -87,7 +79,7 @@ export default function ChoreosListClient({ groupId, teacherId, color, hardcoded
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ choreoId: id }),
       });
-      setHiddenIds(prev => [...prev, id]);
+      setLocallyHidden(prev => [...prev, id]);
     }
   }
 
@@ -180,7 +172,7 @@ export default function ChoreosListClient({ groupId, teacherId, color, hardcoded
                 className={styles.choreoCardLink}
               >
                 <div className={styles.cardNum}>
-                  <span>{String(visibleHardcoded.length + idx + 1).padStart(2, '0')}</span>
+                  <span>{String(hardcodedChoreos.length + idx + 1).padStart(2, '0')}</span>
                 </div>
                 <div className={styles.cardContent}>
                   <h2 className={styles.choreoName}>{choreo.name}</h2>

@@ -1,7 +1,7 @@
 import { redirect, notFound } from 'next/navigation';
 import { getSession } from '@/lib/auth';
 import { GROUPS, getTeacherById } from '@/lib/data';
-import { getChoreoNameOverride } from '@/lib/sheets';
+import { getChoreoNameOverride, getDeletedSongs, getAddedSongsByChoreo } from '@/lib/sheets';
 import { getSongsForChoreo } from '@/lib/songs';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -36,15 +36,23 @@ export default async function ChoreoPage({ params, searchParams }: Props) {
   const teacher = session.isAdmin ? getTeacherById(group.teacherId) : getTeacherById(session.teacherId);
   const color = teacher?.color || '#8b5cf6';
 
-  // El nombre puede haber sido editado por el profe; si hay override guardado, pisa al default hardcodeado
-  const nameOverride = await getChoreoNameOverride(choreo.id);
+  const [nameOverride, deletedSongs, addedSongs] = await Promise.all([
+    getChoreoNameOverride(choreo.id),
+    getDeletedSongs(),
+    getAddedSongsByChoreo(choreo.id),
+  ]);
   const effectiveName = nameOverride || choreo.name;
 
-  // Las canciones reales se leen de /public/audio/<profe>/<grupo>/<coreoId>/.
-  // Si esa carpeta todavía no tiene mp3 cargados, se usa el placeholder hardcodeado
-  // de lib/data.ts (para no mostrar la pantalla vacía mientras se cargan los temas).
-  const realSongs = getSongsForChoreo(group.teacherId, group.id, choreo.id);
-  const effectiveSongs = realSongs.length > 0 ? realSongs : choreo.songs;
+  // Determine the current song: last added song wins, otherwise first non-deleted hardcoded song
+  const deletedFiles = deletedSongs.filter(d => d.choreoId === choreo.id).map(d => d.songFile);
+  const hardcodedSong = choreo.songs.find(s => !deletedFiles.includes(s.file));
+  const lastAdded = addedSongs.length > 0 ? addedSongs[addedSongs.length - 1] : null;
+
+  const initialSong = lastAdded
+    ? { title: lastAdded.title, file: lastAdded.file, addedSongId: lastAdded.id }
+    : hardcodedSong
+      ? { title: hardcodedSong.title, file: hardcodedSong.file }
+      : null;
 
   return (
     <div className={`container ${styles.page}`}>
@@ -65,10 +73,11 @@ export default async function ChoreoPage({ params, searchParams }: Props) {
       </div>
 
       <ChoreoClient
-        choreo={{ ...choreo, name: effectiveName, songs: effectiveSongs }}
+        choreo={{ ...choreo, name: effectiveName, songs: choreo.songs }}
         groupId={group.id}
         color={color}
         groupName={group.name}
+        initialSong={initialSong}
       />
     </div>
   );
