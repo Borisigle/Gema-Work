@@ -1,8 +1,7 @@
 import { redirect, notFound } from 'next/navigation';
 import { getSession } from '@/lib/auth';
 import { GROUPS, getTeacherById } from '@/lib/data';
-import { getChoreoNameOverride, getDeletedSongs, getAddedSongsByChoreo } from '@/lib/sheets';
-import { getSongsForChoreo } from '@/lib/songs';
+import { getChoreoNameOverride, getDeletedSongs, getAddedSongsByChoreo, getCustomChoreoById } from '@/lib/sheets';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import styles from './choreo.module.css';
@@ -24,14 +23,24 @@ export default async function ChoreoPage({ params, searchParams }: Props) {
   const session = await getSession();
   if (!session) redirect('/login');
 
-  // Find the choreo across all groups (todos si es admin, solo los propios si no)
   const teacherGroups = session.isAdmin ? GROUPS : GROUPS.filter(g => g.teacherId === session.teacherId);
-  const choreo = teacherGroups.flatMap(g => g.choreos).find(c => c.id === params.choreoId);
 
-  if (!choreo) notFound();
+  // Try hardcoded first
+  let choreo = teacherGroups.flatMap(g => g.choreos).find(c => c.id === params.choreoId);
+  let group = teacherGroups.find(g => g.choreos.some(c => c.id === params.choreoId));
+  let isCustom = false;
 
-  const group = teacherGroups.find(g => g.choreos.some(c => c.id === params.choreoId));
-  if (!group) notFound();
+  // If not found in hardcoded, try custom choreos from Sheets
+  if (!choreo) {
+    const customChoreo = await getCustomChoreoById(params.choreoId);
+    if (customChoreo && (session.isAdmin || customChoreo.teacherId === session.teacherId)) {
+      choreo = { id: customChoreo.id, name: customChoreo.name, songs: customChoreo.songs };
+      group = teacherGroups.find(g => g.id === customChoreo.groupId);
+      isCustom = true;
+    }
+  }
+
+  if (!choreo || !group) notFound();
 
   const teacher = session.isAdmin ? getTeacherById(group.teacherId) : getTeacherById(session.teacherId);
   const color = teacher?.color || '#8b5cf6';
@@ -43,7 +52,7 @@ export default async function ChoreoPage({ params, searchParams }: Props) {
   ]);
   const effectiveName = nameOverride || choreo.name;
 
-  // Determine the current song: last added song wins, otherwise first non-deleted hardcoded song
+  // Determine the current song
   const deletedFiles = deletedSongs.filter(d => d.choreoId === choreo.id).map(d => d.songFile);
   const hardcodedSong = choreo.songs.find(s => !deletedFiles.includes(s.file));
   const lastAdded = addedSongs.length > 0 ? addedSongs[addedSongs.length - 1] : null;
@@ -52,7 +61,9 @@ export default async function ChoreoPage({ params, searchParams }: Props) {
     ? { title: lastAdded.title, file: lastAdded.file, addedSongId: lastAdded.id }
     : hardcodedSong
       ? { title: hardcodedSong.title, file: hardcodedSong.file }
-      : null;
+      : choreo.songs.length > 0
+        ? { title: choreo.songs[0].title, file: choreo.songs[0].file }
+        : null;
 
   return (
     <div className={`container ${styles.page}`}>

@@ -648,6 +648,25 @@ export async function getCustomChoreosByGroup(groupId: string): Promise<CustomCh
   }));
 }
 
+export async function getCustomChoreoById(choreoId: string): Promise<CustomChoreo | null> {
+  if (isMockMode) {
+    const db = readMockDb();
+    return (db.choreos_custom || []).find((c: any) => c.id === choreoId) || null;
+  }
+
+  const rows = await readSheet('choreos_custom!A:E');
+  if (!rows.length) return null;
+  const row = rows.slice(1).find(r => r[0] === choreoId);
+  if (!row) return null;
+  return {
+    id: row[0],
+    groupId: row[1],
+    teacherId: row[2],
+    name: row[3],
+    songs: JSON.parse(row[4] || '[]'),
+  };
+}
+
 export async function addCustomChoreo(data: Omit<CustomChoreo, 'id'>): Promise<CustomChoreo> {
   const id = `custom-${Date.now()}`;
   const choreo: CustomChoreo = { ...data, id };
