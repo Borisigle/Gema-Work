@@ -13,17 +13,10 @@ interface Props {
   groupName: string;
 }
 
-interface AvailableSong {
-  title: string;
-  file: string;
-  addedSongId?: string;
-}
-
 const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
 export default function ChoreoClient({ choreo, groupId, color, groupName }: Props) {
   const [activeTab, setActiveTab] = useState<'player' | 'notes' | 'sections' | 'vestuario'>('player');
-  const [currentSongIdx, setCurrentSongIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -33,8 +26,8 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   const [notesStatus, setNotesStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [audioError, setAudioError] = useState(false);
 
-  // Available songs (hardcoded minus deleted + added)
-  const [availableSongs, setAvailableSongs] = useState<AvailableSong[]>([]);
+  // Current song (single remix per choreo)
+  const [currentSong, setCurrentSong] = useState<{ title: string; file: string; addedSongId?: string } | null>(null);
   const [songsLoaded, setSongsLoaded] = useState(false);
 
   // Nombre editable de la coreografía
@@ -70,33 +63,35 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   const isDraggingRef = useRef(false);
   const dragRatioRef = useRef(0);
 
-  // Fetch available songs on mount
+  // Fetch current song on mount
   useEffect(() => {
     fetch(`/api/choreos/${choreo.id}/songs`)
       .then(r => r.json())
       .then(data => {
         const deletedFiles: string[] = data.deletedFiles || [];
-        const added = (data.added || []).map((s: any) => ({
-          title: s.title,
-          file: s.file,
-          addedSongId: s.id,
-        }));
+        const added = data.added || [];
 
-        const hardcoded = choreo.songs
-          .filter(s => !deletedFiles.includes(s.file))
-          .map(s => ({ title: s.title, file: s.file }));
+        // Check if a hardcoded song is available
+        const hardcoded = choreo.songs.find(s => !deletedFiles.includes(s.file));
+        // Check if there's an added song
+        const addedSong = added.length > 0 ? added[added.length - 1] : null;
 
-        const all = [...hardcoded, ...added];
-        setAvailableSongs(all.length > 0 ? all : choreo.songs.map(s => ({ title: s.title, file: s.file })));
+        if (addedSong) {
+          setCurrentSong({ title: addedSong.title, file: addedSong.file, addedSongId: addedSong.id });
+        } else if (hardcoded) {
+          setCurrentSong({ title: hardcoded.title, file: hardcoded.file });
+        } else {
+          setCurrentSong(null);
+        }
         setSongsLoaded(true);
       })
       .catch(() => {
-        setAvailableSongs(choreo.songs.map(s => ({ title: s.title, file: s.file })));
+        setCurrentSong(choreo.songs[0] ? { title: choreo.songs[0].title, file: choreo.songs[0].file } : null);
         setSongsLoaded(true);
       });
   }, [choreo.id]);
 
-  const currentSong = availableSongs[currentSongIdx] || availableSongs[0] || choreo.songs[0];
+  const songFile = currentSong?.file || choreo.songs[0]?.file || '';
 
   // Load notes on mount
   useEffect(() => {
@@ -119,7 +114,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
   // Audio event listeners
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !songFile) return;
 
     const onTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
@@ -132,12 +127,8 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     };
     const onDurationChange = () => setDuration(audio.duration);
     const onEnded = () => {
-      if (currentSongIdx < availableSongs.length - 1) {
-        setCurrentSongIdx(i => i + 1);
-      } else {
-        setIsPlaying(false);
-        setCurrentTime(0);
-      }
+      setIsPlaying(false);
+      setCurrentTime(0);
     };
     const onError = () => setAudioError(true);
     const onCanPlay = () => setAudioError(false);
@@ -155,7 +146,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
       audio.removeEventListener('error', onError);
       audio.removeEventListener('canplay', onCanPlay);
     };
-  }, [currentSongIdx, availableSongs.length]);
+  }, [songFile]);
 
   // Handle song change
   useEffect(() => {
@@ -167,7 +158,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     setAudioError(false);
     audio.load();
     if (isPlaying) audio.play().catch(() => {});
-  }, [currentSongIdx]);
+  }, [songFile]);
 
   // Sync volume & speed
   useEffect(() => {
@@ -251,14 +242,6 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     document.addEventListener('touchend', handleEnd);
   }
 
-  function prevSong() {
-    if (currentSongIdx > 0) setCurrentSongIdx(i => i - 1);
-  }
-
-  function nextSong() {
-    if (currentSongIdx < availableSongs.length - 1) setCurrentSongIdx(i => i + 1);
-  }
-
   function formatTime(s: number) {
     if (!isFinite(s)) return '0:00';
     const m = Math.floor(s / 60);
@@ -281,7 +264,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     return isNaN(onlySec) ? null : onlySec;
   }
 
-  const sectionsForCurrentSong = sections.filter(s => s.songFile === currentSong?.file);
+  const sectionsForCurrentSong = sections.filter(s => s.songFile === songFile);
 
   function playSection(section: { id: string; startSec: number; endSec: number }) {
     const audio = audioRef.current;
@@ -342,7 +325,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          songFile: currentSong.file,
+          songFile: songFile,
           label: sectionLabel.trim() || 'Sección',
           startSec: startSecTotal,
           endSec: endSecTotal,
@@ -431,20 +414,20 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
     }
   }
 
-  async function handleDeleteSong(song: AvailableSong) {
-    const isCustom = !!song.addedSongId;
+  async function handleDeleteSong() {
+    if (!currentSong) return;
+    const isCustom = !!currentSong.addedSongId;
     const msg = isCustom
-      ? `¿Borrar el remix "${song.title}"?`
-      : `¿Ocultar el remix "${song.title}"? Ya no aparecerá en esta coreo.`;
+      ? `¿Borrar el remix "${currentSong.title}"?`
+      : `¿Ocultar el remix "${currentSong.title}"? Ya no aparecerá en esta coreo.`;
     if (!confirm(msg)) return;
 
     try {
-      // Delete MP3 from Cloudinary
-      if (song.file.startsWith('http')) {
+      if (currentSong.file.startsWith('http')) {
         await fetch('/api/choreos/cloudinary-delete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: song.file }),
+          body: JSON.stringify({ url: currentSong.file }),
         });
       }
 
@@ -452,8 +435,8 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isCustom
-          ? { addedSongId: song.addedSongId }
-          : { songFile: song.file }
+          ? { addedSongId: currentSong.addedSongId }
+          : { songFile: currentSong.file }
         ),
       });
 
@@ -462,16 +445,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
         return;
       }
 
-      // Update local state
-      setAvailableSongs(prev => {
-        const next = isCustom
-          ? prev.filter(s => s.addedSongId !== song.addedSongId)
-          : prev.filter(s => s.file !== song.file);
-        return next.length > 0 ? next : [];
-      });
-      if (currentSongIdx > 0) {
-        setCurrentSongIdx(i => Math.min(i, Math.max(0, availableSongs.length - 2)));
-      }
+      setCurrentSong(null);
     } catch (err) {
       console.error('Error deleting song:', err);
     }
@@ -489,11 +463,7 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
       .then(r => r.json())
       .then(data => {
         if (data.song) {
-          setAvailableSongs(prev => [...prev, {
-            title: data.song.title,
-            file: data.song.file,
-            addedSongId: data.song.id,
-          }]);
+          setCurrentSong({ title: data.song.title, file: data.song.file, addedSongId: data.song.id });
         }
       });
   }
@@ -556,9 +526,11 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
       </div>
 
       {/* Hidden audio element */}
-      <audio ref={audioRef} preload="metadata">
-        <source src={currentSong.file.startsWith('http') ? currentSong.file : `/audio/${currentSong.file}`} />
-      </audio>
+      {songFile && (
+        <audio ref={audioRef} preload="metadata">
+          <source src={songFile.startsWith('http') ? songFile : `/audio/${songFile}`} />
+        </audio>
+      )}
 
       {/* Tabs */}
       <div className={styles.tabs}>
@@ -616,179 +588,149 @@ export default function ChoreoClient({ choreo, groupId, color, groupName }: Prop
       {/* Player tab */}
       {activeTab === 'player' && (
         <div className={`card ${styles.playerCard} animate-fade-in`}>
-          {/* Compact now playing */}
-          <div className={styles.nowPlaying}>
-            <div className={styles.albumArtSmall}>
-              <div className={`${styles.disc} ${isPlaying ? styles.spinning : ''}`}>💎</div>
-            </div>
-            <div className={styles.songInfo}>
-              <div className={styles.songBadge}>
-                {currentSongIdx + 1} / {choreo.songs.length}
+          {currentSong ? (
+            <>
+              {/* Compact now playing */}
+              <div className={styles.nowPlaying}>
+                <div className={styles.albumArtSmall}>
+                  <div className={`${styles.disc} ${isPlaying ? styles.spinning : ''}`}>💎</div>
+                </div>
+                <div className={styles.songInfo}>
+                  <h2 className={styles.songTitle}>{currentSong.title}</h2>
+                  <p className={styles.choreoNameSmall}>{choreoName}</p>
+                  {activeSectionId && (
+                    <div className={styles.activeSectionBadge}>
+                      🔁 {sections.find(s => s.id === activeSectionId)?.label}
+                      <button onClick={exitSectionMode} title="Salir de la sección">✕</button>
+                    </div>
+                  )}
+                  {audioError && (
+                    <p className={styles.audioError}>
+                      ⚠️ Audio no encontrado: <code>{currentSong.file.startsWith('http') ? currentSong.file : `/public/audio/${currentSong.file}`}</code>
+                    </p>
+                  )}
+                </div>
+                <button className={styles.songDeleteBtn} onClick={handleDeleteSong} title="Borrar remix">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6"/><path d="M14 11v6"/>
+                  </svg>
+                </button>
               </div>
-              <h2 className={styles.songTitle}>{currentSong.title}</h2>
-              <p className={styles.choreoNameSmall}>{choreoName}</p>
-              {activeSectionId && (
-                <div className={styles.activeSectionBadge}>
-                  🔁 {sections.find(s => s.id === activeSectionId)?.label}
-                  <button onClick={exitSectionMode} title="Salir de la sección">✕</button>
+
+              {/* Progress bar */}
+              <div className={styles.progressSection}>
+                <span className={styles.timeLabel}>{formatTime(currentTime)}</span>
+                <div
+                  ref={progressRef}
+                  className={styles.progressBar}
+                  onClick={seek}
+                  onMouseDown={handleDragStart}
+                  onTouchStart={handleDragStart}
+                  role="slider"
+                  aria-label="Progreso de reproducción"
+                >
+                  <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+                  {duration > 0 && sectionsForCurrentSong.map(s => (
+                    <div
+                      key={s.id}
+                      className={styles.sectionMarker}
+                      style={{
+                        left: `${(s.startSec / duration) * 100}%`,
+                        width: `${((s.endSec - s.startSec) / duration) * 100}%`,
+                      }}
+                      title={s.label}
+                    />
+                  ))}
+                  <div className={styles.progressThumb} style={{ left: `${progress}%` }} />
+                </div>
+                <span className={styles.timeLabel}>{formatTime(duration)}</span>
+              </div>
+
+              {/* Controls + Speed + Volume */}
+              <div className={styles.playerControls}>
+                <div className={styles.transportBtns}>
+                  <button className={styles.playBtnSmall} onClick={togglePlay} title={isPlaying ? 'Pausar' : 'Reproducir'}>
+                    {isPlaying ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+
+                <div className={styles.speedBtns}>
+                  {SPEED_OPTIONS.map(s => (
+                    <button
+                      key={s}
+                      className={`${styles.speedBtn} ${speed === s ? styles.speedActive : ''}`}
+                      onClick={() => setSpeed(s)}
+                    >
+                      {s}x
+                    </button>
+                  ))}
+                </div>
+
+                <div className={styles.volumeGroup}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                  </svg>
+                  <input type="range" min="0" max="1" step="0.05" value={volume} onChange={e => setVolume(parseFloat(e.target.value))} className={styles.volumeSlider} />
+                </div>
+              </div>
+
+              {/* Quick sections */}
+              {sectionsForCurrentSong.length > 0 && (
+                <div className={styles.quickSections}>
+                  <span className={styles.quickSectionsLabel}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="11" width="3" height="6"/><rect x="10.5" y="7" width="3" height="10"/><rect x="18" y="3" width="3" height="14"/>
+                    </svg>
+                    Secciones
+                  </span>
+                  <div className={styles.quickSectionBtns}>
+                    {sectionsForCurrentSong.map(s => (
+                      <button
+                        key={s.id}
+                        className={`${styles.quickSectionBtn} ${activeSectionId === s.id ? styles.quickSectionActive : ''}`}
+                        onClick={() => playSection(s)}
+                      >
+                        <span className={styles.quickSectionName}>{s.label}</span>
+                        <span className={styles.quickSectionTime}>{formatTime(s.startSec)}–{formatTime(s.endSec)}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
-              {audioError && (
-                <p className={styles.audioError}>
-                  ⚠️ Audio no encontrado: <code>{currentSong.file.startsWith('http') ? currentSong.file : `/public/audio/${currentSong.file}`}</code>
-                </p>
-              )}
-            </div>
-          </div>
 
-          {/* Progress bar */}
-          <div className={styles.progressSection}>
-            <span className={styles.timeLabel}>{formatTime(currentTime)}</span>
-            <div
-              ref={progressRef}
-              className={styles.progressBar}
-              onClick={seek}
-              onMouseDown={handleDragStart}
-              onTouchStart={handleDragStart}
-              role="slider"
-              aria-label="Progreso de reproducción"
-            >
-              <div className={styles.progressFill} style={{ width: `${progress}%` }} />
-              {duration > 0 && sectionsForCurrentSong.map(s => (
-                <div
-                  key={s.id}
-                  className={styles.sectionMarker}
-                  style={{
-                    left: `${(s.startSec / duration) * 100}%`,
-                    width: `${((s.endSec - s.startSec) / duration) * 100}%`,
-                  }}
-                  title={s.label}
+              {/* Replace remix button */}
+              <div className={styles.addSongRow}>
+                <CloudinaryUpload
+                  accept="audio/*"
+                  onUpload={handleAddSong}
+                  label="Reemplazar remix"
+                  className="btn btn-secondary btn-sm"
                 />
-              ))}
-              <div className={styles.progressThumb} style={{ left: `${progress}%` }} />
-            </div>
-            <span className={styles.timeLabel}>{formatTime(duration)}</span>
-          </div>
-
-          {/* Controls + Speed + Volume — all in one row */}
-          <div className={styles.playerControls}>
-            <div className={styles.transportBtns}>
-              <button className="btn btn-ghost btn-sm" onClick={prevSong} disabled={currentSongIdx === 0} title="Anterior">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" strokeWidth="2" stroke="currentColor" fill="none"/>
-                </svg>
-              </button>
-              <button className={styles.playBtnSmall} onClick={togglePlay} title={isPlaying ? 'Pausar' : 'Reproducir'}>
-                {isPlaying ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="5 3 19 12 5 21 5 3"/>
-                  </svg>
-                )}
-              </button>
-              <button className="btn btn-ghost btn-sm" onClick={nextSong} disabled={currentSongIdx === availableSongs.length - 1} title="Siguiente">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" strokeWidth="2" stroke="currentColor" fill="none"/>
-                </svg>
-              </button>
-            </div>
-
-            <div className={styles.speedBtns}>
-              {SPEED_OPTIONS.map(s => (
-                <button
-                  key={s}
-                  className={`${styles.speedBtn} ${speed === s ? styles.speedActive : ''}`}
-                  onClick={() => setSpeed(s)}
-                >
-                  {s}x
-                </button>
-              ))}
-            </div>
-
-            <div className={styles.volumeGroup}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-              </svg>
-              <input type="range" min="0" max="1" step="0.05" value={volume} onChange={e => setVolume(parseFloat(e.target.value))} className={styles.volumeSlider} />
-            </div>
-          </div>
-
-          {/* Quick sections */}
-          {sectionsForCurrentSong.length > 0 && (
-            <div className={styles.quickSections}>
-              <span className={styles.quickSectionsLabel}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="11" width="3" height="6"/><rect x="10.5" y="7" width="3" height="10"/><rect x="18" y="3" width="3" height="14"/>
-                </svg>
-                Secciones
-              </span>
-              <div className={styles.quickSectionBtns}>
-                {sectionsForCurrentSong.map(s => (
-                  <button
-                    key={s.id}
-                    className={`${styles.quickSectionBtn} ${activeSectionId === s.id ? styles.quickSectionActive : ''}`}
-                    onClick={() => playSection(s)}
-                  >
-                    <span className={styles.quickSectionName}>{s.label}</span>
-                    <span className={styles.quickSectionTime}>{formatTime(s.startSec)}–{formatTime(s.endSec)}</span>
-                  </button>
-                ))}
               </div>
+            </>
+          ) : (
+            /* No song state */
+            <div className={styles.sinRemix}>
+              <p>Sin remix cargado</p>
+              <CloudinaryUpload
+                accept="audio/*"
+                onUpload={handleAddSong}
+                label="+ Agregar remix"
+                className="btn btn-secondary btn-sm"
+              />
             </div>
           )}
-
-          {/* Song list */}
-          <div className={styles.songList}>
-            <h3 className={styles.songListTitle}>Remixes</h3>
-            {availableSongs.length === 0 ? (
-              <p className={styles.sinRemix}>Sin remix cargado</p>
-            ) : (
-              <>
-                {availableSongs.map((song, idx) => (
-                  <div
-                    key={`${song.file}-${idx}`}
-                    className={`${styles.songItem} ${currentSongIdx === idx ? styles.songActive : ''}`}
-                  >
-                    <button
-                      className={styles.songItemBtn}
-                      onClick={() => { setCurrentSongIdx(idx); setIsPlaying(false); }}
-                    >
-                      <span className={styles.songItemNum}>{idx + 1}</span>
-                      <span className={styles.songItemName}>{song.title}</span>
-                      {currentSongIdx === idx && isPlaying && (
-                        <span className={styles.playingIndicator}>
-                          <span /><span /><span />
-                        </span>
-                      )}
-                    </button>
-                    <button
-                      className={styles.songDeleteBtn}
-                      onClick={() => handleDeleteSong(song)}
-                      title="Borrar remix"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                        <path d="M10 11v6"/><path d="M14 11v6"/>
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-                <div className={styles.addSongRow}>
-                  <CloudinaryUpload
-                    accept="audio/*"
-                    onUpload={handleAddSong}
-                    label="+ Agregar remix"
-                    className="btn btn-secondary btn-sm"
-                  />
-                </div>
-              </>
-            )}
-          </div>
         </div>
       )}
 
@@ -840,7 +782,7 @@ Ejemplo:
             <div>
               <h3 className={styles.notesTitle}>Secciones de práctica</h3>
               <p className={styles.notesSub}>
-                Marcá un fragmento de "{currentSong.title}" para repasarlo en loop manual
+                Marcá un fragmento de "{currentSong?.title}" para repasarlo en loop manual
               </p>
             </div>
             {!isAddingSection && (
