@@ -300,6 +300,30 @@
   transform: scale(0.95);
 }
 
+.loopBtn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.loopBtn:hover {
+  border-color: var(--color);
+  color: var(--color);
+}
+
+.loopActive {
+  background: color-mix(in srgb, var(--color) 15%, white);
+  border-color: var(--color);
+  color: var(--color);
+}
+
 .volumeGroup {
   display: flex;
   align-items: center;
